@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('finance_reports', function (Blueprint $table) {
+        Schema::create('villas', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
-            $table->string('description');
-            $table->decimal('amount', 15, 2);
-            $table->enum('type', ['income', 'expense']);
+            $table->foreignId('pemilik_id')->constrained('users')->onDelete('cascade');
+            $table->string('name');
+            $table->string('email');
+            $table->string('image')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('finance_reports');
+        Schema::dropIfExists('villas');
     }
 };

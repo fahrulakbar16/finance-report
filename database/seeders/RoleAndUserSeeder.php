@@ -6,6 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
+use App\Models\Villa;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Hash;
 
 class RoleAndUserSeeder extends Seeder
@@ -35,26 +37,37 @@ class RoleAndUserSeeder extends Seeder
         ]);
         $userPengelola->assignRole($rolePengelola);
 
-        // 4. Create Dummy Finance Data
-        \App\Models\FinanceReport::create([
-            'date' => now()->subDays(2),
-            'description' => 'Sewa Villa 2 Malam (Tamu A)',
+        // 4. Create Dummy Villa tied to Pemilik
+        $villa = Villa::create([
+            'pemilik_id' => $userPemilik->id,
+            'name' => 'Villa Sunset Paradise',
+            'email' => 'sunset@villa.com',
+            'description' => 'Villa mewah dengan pemandangan sunset yang indah.',
+        ]);
+
+        // 5. Create Dummy Transaction Data tied to Villa
+        Transaction::create([
+            'villa_id' => $villa->id,
+            'name' => 'Sewa Villa 2 Malam (Tamu A)',
             'amount' => 5000000,
             'type' => 'income',
+            'date' => now()->subDays(2),
         ]);
 
-        \App\Models\FinanceReport::create([
-            'date' => now()->subDays(1),
-            'description' => 'Pembelian Sabun dan Tissue',
+        Transaction::create([
+            'villa_id' => $villa->id,
+            'name' => 'Pembelian Sabun dan Tissue',
             'amount' => 250000,
             'type' => 'expense',
+            'date' => now()->subDays(1),
         ]);
 
-        \App\Models\FinanceReport::create([
-            'date' => now(),
-            'description' => 'Gaji Staff Kebersihan',
+        Transaction::create([
+            'villa_id' => $villa->id,
+            'name' => 'Gaji Staff Kebersihan',
             'amount' => 1500000,
             'type' => 'expense',
+            'date' => now(),
         ]);
     }
 }

@@ -237,9 +237,9 @@
       <div class="position-sticky sidebar-sticky">
         <ul class="nav flex-column gap-1">
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}" href="{{ route('finance.index') }}">
+            <a class="nav-link {{ request()->routeIs('transactions.index') ? 'active' : '' }}" href="{{ route('transactions.index') }}">
               <i class="bi bi-wallet2"></i>
-              Laporan Keuangan
+              Laporan Transaksi
             </a>
           </li>
 
@@ -248,6 +248,12 @@
             <h6 class="sidebar-heading px-3 mb-2 text-uppercase">
               Administration
             </h6>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('villas.*') ? 'active' : '' }}" href="{{ route('villas.index') }}">
+              <i class="bi bi-buildings"></i>
+              Manajemen Villa
+            </a>
           </li>
           <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
