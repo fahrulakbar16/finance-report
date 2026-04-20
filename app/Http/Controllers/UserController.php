@@ -19,7 +19,8 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('roles')->paginate(10);
-        return view('users.index', compact('users'));
+        $roles = Role::all();
+        return view('users.index', compact('users', 'roles'));
     }
 
     /**
@@ -40,23 +41,6 @@ class UserController extends Controller
 
         return redirect()->route('users.index')
             ->with('success', 'User successfully created.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        return view('users.show', compact('user'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        $roles = Role::all();
-        return view('users.edit', compact('user', 'roles'));
     }
 
     /**
