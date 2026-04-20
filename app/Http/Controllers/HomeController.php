@@ -35,11 +35,11 @@ class HomeController extends Controller
         $totalIncomeMonth = Transaction::where('type', 'income')
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
-        
+
         $totalExpenseMonth = Transaction::where('type', 'expense')
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
-        
+
         $balanceMonth = $totalIncomeMonth - $totalExpenseMonth;
 
         // 2. Data Grafik (6 Bulan Terakhir)
@@ -53,9 +53,9 @@ class HomeController extends Controller
         $aiInsight = $this->generateAiInsight($totalIncomeMonth, $totalExpenseMonth, $balanceMonth);
 
         return view('home', compact(
-            'totalIncomeMonth', 
-            'totalExpenseMonth', 
-            'balanceMonth', 
+            'totalIncomeMonth',
+            'totalExpenseMonth',
+            'balanceMonth',
             'chartData',
             'recentTransactions',
             'recurringTransactions',
@@ -72,14 +72,14 @@ class HomeController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $month = Carbon::now()->subMonths($i);
             $labels[] = $month->format('M Y');
-            
+
             $start = $month->copy()->startOfMonth();
             $end = $month->copy()->endOfMonth();
 
             $incomeData[] = Transaction::where('type', 'income')
                 ->whereBetween('date', [$start, $end])
                 ->sum('amount');
-            
+
             $expenseData[] = Transaction::where('type', 'expense')
                 ->whereBetween('date', [$start, $end])
                 ->sum('amount');
@@ -98,6 +98,42 @@ class HomeController extends Controller
             return "Belum ada aktivitas keuangan bulan ini. Mulailah mencatat transaksi untuk mendapatkan analisis.";
         }
 
+        $apiKey = env('GEMINI_API_KEY');
+        if (!$apiKey) {
+            return $this->fallbackAiInsight($income, $expense, $balance);
+        }
+
+        $cacheKey = "ai_insight_" . date('Y_m_d_G'); // Cache per hour
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 60 * 60, function () use ($income, $expense, $balance, $apiKey) {
+            $prompt = "Sebagai penasihat keuangan Villa cerdas, sapa pengguna dan tinjau data ini: Pemasukan Rp" . number_format($income, 0, ',', '.') . ", Pengeluaran Rp" . number_format($expense, 0, ',', '.') . " (Saldo: Rp" . number_format($balance, 0, ',', '.') . "). Berikan 1-2 kalimat (maksimal 25 kata) analisis tajam atau saran praktis berbahasa Indonesia. Jangan gunakan tanda bintang tebal (*).";
+
+            try {
+                $response = \Illuminate\Support\Facades\Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => $prompt]
+                            ]
+                        ]
+                    ]
+                ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                    return $text ? trim($text) : $this->fallbackAiInsight($income, $expense, $balance);
+                }
+
+                return $this->fallbackAiInsight($income, $expense, $balance);
+            } catch (\Exception $e) {
+                return $this->fallbackAiInsight($income, $expense, $balance);
+            }
+        });
+    }
+
+    private function fallbackAiInsight($income, $expense, $balance)
+    {
         if ($balance < 0) {
             return "Peringatan: Pengeluaran Anda melebihi pemasukan bulan ini (Defisit). Pertimbangkan untuk meninjau kembali pengeluaran rutin Anda.";
         }
