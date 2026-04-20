@@ -237,6 +237,12 @@
       <div class="position-sticky sidebar-sticky">
         <ul class="nav flex-column gap-1">
           <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
+              <i class="bi bi-speedometer2"></i>
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('transactions.index') ? 'active' : '' }}" href="{{ route('transactions.index') }}">
               <i class="bi bi-wallet2"></i>
               Laporan Transaksi
@@ -286,5 +292,6 @@
   </div>
 </div>
 
+    @stack('scripts')
 </body>
 </html>

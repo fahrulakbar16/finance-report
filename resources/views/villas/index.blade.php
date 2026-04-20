@@ -60,6 +60,9 @@
                         </td>
                         <td class="text-end pe-4">
                             <div class="btn-group shadow-sm rounded-pill" role="group">
+                                <a href="{{ route('villas.show', $villa) }}" class="btn btn-sm btn-light border" title="Detail">
+                                    <i class="bi bi-eye text-primary"></i>
+                                </a>
                                 <button type="button" class="btn btn-sm btn-light border" title="Edit" data-bs-toggle="modal" data-bs-target="#editVillaModal{{ $villa->id }}">
                                     <i class="bi bi-pencil text-muted"></i>
                                 </button>
