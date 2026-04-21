@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  PHP_VERSION: "8.4"
+  PHP_VERSION: "8.2"
 
 jobs:
   deploy:
@@ -30,7 +30,6 @@ jobs:
         run: composer install --no-dev --optimize-autoloader --no-interaction
 
       # 4️⃣ Prepare deploy directory
-      # npm run build dilakukan di lokal
       - name: Prepare deploy directory
         run: |
           mkdir deploy
@@ -50,9 +49,9 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -T 10 -H -p 65002 178.16.132.119 >> ~/.ssh/known_hosts
+          ssh-keyscan -T 10 -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      # 6️⃣ Deploy (AMAN)
+      # 6️⃣ Deploy
       - name: Deploy to Niagahoster
         run: |
           rsync -avz --delete \
@@ -98,8 +97,7 @@ jobs:
             php artisan optimize:clear
             php artisan optimize
             php artisan storage:link
-            composer install
-            php artisan migrate
+            php artisan migrate --force
 
             chmod -R 775 storage bootstrap/cache
           EOF
