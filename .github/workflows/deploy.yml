@@ -69,6 +69,7 @@ jobs:
           ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd ${{ secrets.SSH_REMOTE_PATH }}
 
+
             if [ ! -f .env ]; then
               cp .env.example .env
             fi
@@ -94,12 +95,13 @@ jobs:
           ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd ${{ secrets.SSH_REMOTE_PATH }}
 
+            chmod -R 775 bootstrap/cache
+            chmod -R 775 storage
+
             php artisan optimize:clear
             php artisan optimize
             php artisan storage:link
             php artisan migrate --force
-
-            chmod -R 775 storage bootstrap/cache
           EOF
 
       # 9️⃣ Cleanup
