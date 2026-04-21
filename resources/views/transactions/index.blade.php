@@ -12,6 +12,14 @@
         <button type="button" class="btn-close mt-1" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
+<div class="d-flex justify-content-end mb-3 gap-2">
+    <a href="{{ route('export.excel.all', request()->query()) }}" class="btn btn-sm btn-success py-2 px-3 fw-medium shadow-sm" style="border-radius: 0.5rem;">
+        <i class="bi bi-file-earmark-excel me-1"></i> Download Excel
+    </a>
+    <a href="{{ route('export.pdf.all', request()->query()) }}" class="btn btn-sm btn-danger py-2 px-3 fw-medium shadow-sm" style="border-radius: 0.5rem;">
+        <i class="bi bi-file-earmark-pdf me-1"></i> Download PDF
+    </a>
+</div>
 
 <!-- Filter Bar -->
 <div class="card border-0 shadow-sm mb-4" style="border-radius: var(--fi-radius);">

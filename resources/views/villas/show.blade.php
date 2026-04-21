@@ -23,8 +23,11 @@
                 <p class="text-muted mb-0 small"><i class="bi bi-envelope me-1"></i> {{ $villa->email }} &bull; <i class="bi bi-person me-1"></i> {{ $villa->pemilik->name }}</p>
             </div>
             <div class="col-md-auto mt-3 mt-md-0 d-flex gap-2">
+                <a href="{{ route('export.excel.villa', ['villa' => $villa->id] + request()->query()) }}" class="btn btn-sm btn-success px-3 py-2 fw-medium shadow-sm">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+                </a>
                 <form action="{{ route('transactions.index', ['villa_id' => $villa->id]) }}" method="GET">
-                    <button type="submit" class="btn btn-sm btn-light border px-3 py-2 fw-medium">
+                    <button type="submit" class="btn btn-sm btn-light border px-3 py-2 fw-medium shadow-sm">
                         <i class="bi bi-list-stars me-1"></i> Lihat Semua Transaksi
                     </button>
                 </form>
