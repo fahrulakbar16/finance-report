@@ -69,7 +69,16 @@ jobs:
           ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd ${{ secrets.SSH_REMOTE_PATH }}
 
+            # Ensure necessary directories exist
+            mkdir -p bootstrap/cache
+            mkdir -p storage/app/public
+            mkdir -p storage/framework/cache
+            mkdir -p storage/framework/sessions
+            mkdir -p storage/framework/views
+            mkdir -p storage/logs
 
+            # Set permissions
+            chmod -R 775 bootstrap/cache storage
             if [ ! -f .env ]; then
               cp .env.example .env
             fi
