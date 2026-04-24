@@ -62,8 +62,8 @@ jobs:
             deploy/ \
             ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}
 
-      # 7️⃣ Setup .env (TIDAK MENIMPA)
-      - name: Setup environment file
+      # 7️⃣ Setup .env & Post deploy
+      - name: Setup environment and Run Laravel commands
         run: |
           ssh -p ${{ secrets.SSH_PORT }} \
           ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
@@ -79,6 +79,7 @@ jobs:
 
             # Set permissions
             chmod -R 775 bootstrap/cache storage
+
             if [ ! -f .env ]; then
               cp .env.example .env
             fi
@@ -95,18 +96,8 @@ jobs:
             if ! grep -q "^APP_KEY=base64:" .env; then
               php artisan key:generate --force
             fi
-          EOF
 
-      # 8️⃣ Post deploy
-      - name: Post-deploy Laravel commands
-        run: |
-          ssh -p ${{ secrets.SSH_PORT }} \
-          ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd ${{ secrets.SSH_REMOTE_PATH }}
-
-            chmod -R 775 bootstrap/cache
-            chmod -R 775 storage
-
+            # Post-deploy commands
             php artisan optimize:clear
             php artisan optimize
             php artisan storage:link
