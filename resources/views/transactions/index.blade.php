@@ -51,7 +51,7 @@
     @endif
 
     <!-- Summary Widgets -->
-    <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+    <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
         <div class="col">
             <div class="card card-hover h-100 border-0 shadow-sm rounded-4">
                 <div class="card-body p-4">
@@ -87,11 +87,26 @@
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <div>
-                            <h6 class="text-muted fw-semibold mb-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Saldo Akhir</h6>
-                            <h3 class="fw-bold mb-0 {{ $balance >= 0 ? 'text-primary' : 'text-danger' }}">Rp {{ number_format($balance, 0, ',', '.') }}</h3>
+                            <h6 class="text-muted fw-semibold mb-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Bagian Pengelola</h6>
+                            <h3 class="fw-bold mb-0 {{ $bagianPengelola >= 0 ? 'text-primary' : 'text-danger' }}">Rp {{ number_format($bagianPengelola, 0, ',', '.') }}</h3>
                         </div>
                         <div class="icon-circle bg-primary bg-opacity-10 text-primary">
-                            <i class="bi bi-wallet2 fs-4"></i>
+                            <i class="bi bi-person-badge fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card card-hover h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h6 class="text-muted fw-semibold mb-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Bagian Pemilik</h6>
+                            <h3 class="fw-bold mb-0 {{ $bagianPemilik >= 0 ? 'text-info' : 'text-danger' }}">Rp {{ number_format($bagianPemilik, 0, ',', '.') }}</h3>
+                        </div>
+                        <div class="icon-circle bg-info bg-opacity-10 text-info">
+                            <i class="bi bi-person-fill fs-4"></i>
                         </div>
                     </div>
                 </div>
@@ -190,9 +205,16 @@
                                         Pemasukan
                                     </span>
                                 @else
-                                    <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.75rem;">
-                                        Pengeluaran
-                                    </span>
+                                    <div class="d-flex flex-column align-items-start gap-1">
+                                        <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.75rem;">
+                                            Pengeluaran
+                                        </span>
+                                        @if($transaction->is_tanggungan_pemilik)
+                                        <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.75rem;">
+                                            Tanggungan Pemilik
+                                        </span>
+                                        @endif
+                                    </div>
                                 @endif
                             </td>
                             <td class="text-end pe-4 fw-bold {{ $transaction->type == 'income' ? 'text-success' : 'text-danger' }}">
@@ -254,7 +276,7 @@
 
                   <div class="col-md-6">
                       <label for="type" class="form-label fw-medium text-dark small">Tipe Transaksi</label>
-                      <select name="type" id="type" class="form-select form-select-lg border-light bg-light rounded-3" required style="font-size: 1rem;">
+                      <select name="type" id="type" class="form-select form-select-lg border-light bg-light rounded-3" required style="font-size: 1rem;" onchange="document.getElementById('tanggungan_pemilik_wrapper').style.display = this.value === 'expense' ? 'block' : 'none'">
                           <option value="income">Pemasukan (Income)</option>
                           <option value="expense">Pengeluaran (Expense)</option>
                       </select>
@@ -265,6 +287,20 @@
                       <div class="input-group input-group-lg">
                           <span class="input-group-text border-light bg-light rounded-start-3 border-end-0 text-muted" style="font-size: 1rem;">Rp</span>
                           <input type="number" name="amount" id="amount" class="form-control border-light bg-light rounded-end-3 border-start-0" required placeholder="0" style="font-size: 1rem;">
+                      </div>
+                  </div>
+
+                  <div class="col-md-12" id="tanggungan_pemilik_wrapper" style="display: none;">
+                      <div class="p-3 bg-light rounded-3 border border-light">
+                          <label class="form-label fw-bold text-dark small d-block mb-2">Apakah ini Tanggungan Pemilik?</label>
+                          <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="is_tanggungan_pemilik" id="tanggungan_no" value="0" checked>
+                              <label class="form-check-label text-dark" for="tanggungan_no">Tidak (Dibagi sesuai persentase villa)</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="is_tanggungan_pemilik" id="tanggungan_yes" value="1">
+                              <label class="form-check-label text-dark" for="tanggungan_yes">Ya (Dipotong penuh dari bagian Pemilik)</label>
+                          </div>
                       </div>
                   </div>
               </div>

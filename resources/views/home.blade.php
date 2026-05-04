@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Stats Widgets -->
-<div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+<div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
     <div class="col">
         <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
             <div class="card-body p-4">
@@ -35,12 +35,25 @@
         <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Sisa Saldo / Profit</h6>
+                    <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Bagian Pengelola</h6>
                     <div class="text-primary bg-primary bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
-                        <i class="bi bi-wallet2 fs-5"></i>
+                        <i class="bi bi-person-badge fs-5"></i>
                     </div>
                 </div>
-                <h3 class="fw-bold mb-0 {{ $balanceMonth >= 0 ? 'text-dark' : 'text-danger' }}">Rp {{ number_format($balanceMonth, 0, ',', '.') }}</h3>
+                <h3 class="fw-bold mb-0 {{ $bagianPengelolaMonth >= 0 ? 'text-dark' : 'text-danger' }}">Rp {{ number_format($bagianPengelolaMonth, 0, ',', '.') }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Bagian Pemilik</h6>
+                    <div class="text-info bg-info bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                        <i class="bi bi-person-fill fs-5"></i>
+                    </div>
+                </div>
+                <h3 class="fw-bold mb-0 {{ $bagianPemilikMonth >= 0 ? 'text-dark' : 'text-danger' }}">Rp {{ number_format($bagianPemilikMonth, 0, ',', '.') }}</h3>
             </div>
         </div>
     </div>

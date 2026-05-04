@@ -30,13 +30,51 @@ class TransactionController extends Controller
         
         $villas = Villa::all();
 
-        // Calculate Summary for the current filtered view
-        $statsQuery = clone $query;
+        $statsQuery = (clone $query)->reorder();
         $totalIncome = (clone $statsQuery)->where('type', 'income')->sum('amount');
         $totalExpense = (clone $statsQuery)->where('type', 'expense')->sum('amount');
-        $balance = $totalIncome - $totalExpense;
+        
+        $villasStats = (clone $statsQuery)
+            ->selectRaw('villa_id, type, is_tanggungan_pemilik, SUM(amount) as total')
+            ->groupBy('villa_id', 'type', 'is_tanggungan_pemilik')
+            ->get();
+            
+        $bagianPengelola = 0;
+        $bagianPemilik = 0;
+        
+        $villasData = $villas->keyBy('id');
+        
+        $villaProfits = [];
+        $tanggunganPemilik = [];
+        
+        foreach ($villasStats as $stat) {
+            if (!isset($villaProfits[$stat->villa_id])) {
+                $villaProfits[$stat->villa_id] = 0;
+            }
+            if (!isset($tanggunganPemilik[$stat->villa_id])) {
+                $tanggunganPemilik[$stat->villa_id] = 0;
+            }
+            
+            if ($stat->type == 'income') {
+                $villaProfits[$stat->villa_id] += $stat->total;
+            } else {
+                if ($stat->is_tanggungan_pemilik) {
+                    $tanggunganPemilik[$stat->villa_id] += $stat->total;
+                } else {
+                    $villaProfits[$stat->villa_id] -= $stat->total;
+                }
+            }
+        }
+        
+        foreach ($villaProfits as $villa_id => $profit) {
+            $villa = $villasData[$villa_id] ?? null;
+            if ($villa) {
+                $bagianPengelola += $profit * ($villa->persenan_pengelola / 100);
+                $bagianPemilik += ($profit * ($villa->persenan_pemilik / 100)) - ($tanggunganPemilik[$villa_id] ?? 0);
+            }
+        }
 
-        return view('transactions.index', compact('transactions', 'villas', 'totalIncome', 'totalExpense', 'balance'));
+        return view('transactions.index', compact('transactions', 'villas', 'totalIncome', 'totalExpense', 'bagianPengelola', 'bagianPemilik'));
     }
 
     public function store(StoreTransactionRequest $request)
@@ -67,6 +105,7 @@ class TransactionController extends Controller
                     'date' => $data['date'],
                     'is_recurring' => true,
                     'recurring_id' => $recurring->id,
+                    'is_tanggungan_pemilik' => $data['type'] === 'expense' ? ($data['is_tanggungan_pemilik'] ?? false) : false,
                 ]);
             });
 
@@ -81,6 +120,7 @@ class TransactionController extends Controller
                 'category_id' => $data['category_id'] ?? null,
                 'date' => $data['date'],
                 'is_recurring' => false,
+                'is_tanggungan_pemilik' => $data['type'] === 'expense' ? ($data['is_tanggungan_pemilik'] ?? false) : false,
             ]);
 
             return redirect()->back()->with('success', 'Transaksi berhasil ditambahkan.');

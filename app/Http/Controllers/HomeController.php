@@ -52,10 +52,29 @@ class HomeController extends Controller
         // 4. AI Insight (Rule-based)
         $aiInsight = $this->generateAiInsight($totalIncomeMonth, $totalExpenseMonth, $balanceMonth);
 
+        $villas = \App\Models\Villa::with(['transactions' => function ($query) use ($startOfMonth, $endOfMonth) {
+            $query->whereBetween('date', [$startOfMonth, $endOfMonth]);
+        }])->get();
+
+        $bagianPengelolaMonth = 0;
+        $bagianPemilikMonth = 0;
+
+        foreach ($villas as $villa) {
+            $villaIncome = $villa->transactions->where('type', 'income')->sum('amount');
+            $villaRegularExpense = $villa->transactions->where('type', 'expense')->where('is_tanggungan_pemilik', false)->sum('amount');
+            $villaTanggunganExpense = $villa->transactions->where('type', 'expense')->where('is_tanggungan_pemilik', true)->sum('amount');
+            
+            $villaProfit = $villaIncome - $villaRegularExpense;
+
+            $bagianPengelolaMonth += ($villaProfit * ($villa->persenan_pengelola / 100));
+            $bagianPemilikMonth += ($villaProfit * ($villa->persenan_pemilik / 100)) - $villaTanggunganExpense;
+        }
+
         return view('home', compact(
             'totalIncomeMonth',
             'totalExpenseMonth',
-            'balanceMonth',
+            'bagianPengelolaMonth',
+            'bagianPemilikMonth',
             'chartData',
             'recentTransactions',
             'recurringTransactions',

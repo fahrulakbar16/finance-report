@@ -18,6 +18,17 @@ class StoreVillaRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'description' => ['nullable', 'string'],
+            'persenan_pengelola' => ['required', 'integer', 'min:0', 'max:100'],
+            'persenan_pemilik' => ['required', 'integer', 'min:0', 'max:100'],
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        if ($this->has('persenan_pengelola')) {
+            $this->merge([
+                'persenan_pemilik' => 100 - (int) $this->persenan_pengelola,
+            ]);
+        }
     }
 }

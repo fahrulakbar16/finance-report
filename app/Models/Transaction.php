@@ -19,6 +19,7 @@ class Transaction extends Model
         'date',
         'is_recurring',
         'recurring_id',
+        'is_tanggungan_pemilik',
     ];
 
     public function villa(): BelongsTo

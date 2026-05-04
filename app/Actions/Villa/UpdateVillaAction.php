@@ -20,6 +20,8 @@ class UpdateVillaAction
             'name' => $data['name'],
             'email' => $data['email'],
             'description' => $data['description'] ?? null,
+            'persenan_pengelola' => $data['persenan_pengelola'],
+            'persenan_pemilik' => $data['persenan_pemilik'],
         ]);
 
         return $villa;

@@ -17,6 +17,8 @@ class Villa extends Model
         'email',
         'image',
         'description',
+        'persenan_pengelola',
+        'persenan_pemilik',
     ];
 
     public function pemilik(): BelongsTo

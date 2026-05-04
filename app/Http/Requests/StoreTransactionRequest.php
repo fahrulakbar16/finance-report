@@ -23,6 +23,7 @@ class StoreTransactionRequest extends FormRequest
             'is_recurring' => ['nullable', 'boolean'],
             'frequency' => ['nullable', 'required_if:is_recurring,1', 'in:monthly,weekly,yearly'],
             'end_date' => ['nullable', 'date', 'after_or_equal:date'],
+            'is_tanggungan_pemilik' => ['nullable', 'boolean'],
         ];
     }
 }

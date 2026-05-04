@@ -68,6 +68,9 @@
             $transactions = $data['transactions'];
             $income = $transactions->where('type', 'income')->sum('amount');
             $expense = $transactions->where('type', 'expense')->sum('amount');
+            $profit = $income - $expense;
+            $bagianPengelola = $profit * ($villa->persenan_pengelola / 100);
+            $bagianPemilik = $profit * ($villa->persenan_pemilik / 100);
         @endphp
 
         <h2>LAPORAN TRANSAKSI - {{ strtoupper($villa->name) }}</h2>
@@ -77,7 +80,8 @@
         <div class="summary-box" style="text-align: left;">
             <strong>Total Pemasukan:</strong> Rp {{ number_format($income, 0, ',', '.') }} <br>
             <strong>Total Pengeluaran:</strong> Rp {{ number_format($expense, 0, ',', '.') }} <br>
-            <strong>Saldo:</strong> Rp {{ number_format($income - $expense, 0, ',', '.') }}
+            <strong>Bagian Pengelola ({{ $villa->persenan_pengelola }}%):</strong> Rp {{ number_format($bagianPengelola, 0, ',', '.') }} <br>
+            <strong>Bagian Pemilik ({{ $villa->persenan_pemilik }}%):</strong> Rp {{ number_format($bagianPemilik, 0, ',', '.') }}
         </div>
 
         <table>

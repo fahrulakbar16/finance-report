@@ -84,7 +84,7 @@
             </tbody>
         </table>
     </div>
-    
+
     @if($villas->hasPages())
     <div class="card-footer bg-white border-top py-3 px-4">
         {{ $villas->links() }}
@@ -142,6 +142,23 @@
                   @if(old('form_type') == 'create_villa')
                     @error('description')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
                   @endif
+              </div>
+
+              <div class="row mb-3">
+                  <div class="col-md-6">
+                      <label for="persenan_pengelola" class="form-label fw-medium text-dark small">Persentase Pengelola (%)</label>
+                      <input type="number" class="form-control @error('persenan_pengelola') is-invalid @enderror" id="persenan_pengelola" name="persenan_pengelola" value="{{ old('form_type') == 'create_villa' ? old('persenan_pengelola') : 0 }}" required min="0" max="100">
+                      @if(old('form_type') == 'create_villa')
+                        @error('persenan_pengelola')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
+                      @endif
+                  </div>
+                  <div class="col-md-6">
+                      <label for="persenan_pemilik" class="form-label fw-medium text-dark small">Persentase Pemilik (%)</label>
+                      <input type="number" class="form-control @error('persenan_pemilik') is-invalid @enderror" id="persenan_pemilik" name="persenan_pemilik" value="{{ old('form_type') == 'create_villa' ? old('persenan_pemilik') : 0 }}" required min="0" max="100" disabled>
+                      @if(old('form_type') == 'create_villa')
+                        @error('persenan_pemilik')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
+                      @endif
+                  </div>
               </div>
           </div>
           <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
@@ -205,6 +222,23 @@
                     @error('description')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
                   @endif
               </div>
+
+              <div class="row mb-3">
+                  <div class="col-md-6">
+                      <label class="form-label fw-medium text-dark small">Persentase Pengelola (%)</label>
+                      <input type="number" class="form-control @error('persenan_pengelola') is-invalid @enderror" name="persenan_pengelola" value="{{ old('form_type') == 'edit_villa_'.$villa->id ? old('persenan_pengelola') : $villa->persenan_pengelola }}" required min="0" max="100">
+                      @if(old('form_type') == 'edit_villa_'.$villa->id)
+                        @error('persenan_pengelola')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
+                      @endif
+                  </div>
+                  <div class="col-md-6">
+                      <label class="form-label fw-medium text-dark small">Persentase Pemilik (%)</label>
+                      <input type="number" class="form-control @error('persenan_pemilik') is-invalid @enderror" name="persenan_pemilik" value="{{ old('form_type') == 'edit_villa_'.$villa->id ? old('persenan_pemilik') : $villa->persenan_pemilik }}" required min="0" max="100" disabled>
+                      @if(old('form_type') == 'edit_villa_'.$villa->id)
+                        @error('persenan_pemilik')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
+                      @endif
+                  </div>
+              </div>
           </div>
           <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
             <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
@@ -227,8 +261,41 @@
             var villaId = formType.split('edit_villa_')[1];
             var myModal = new bootstrap.Modal(document.getElementById('editVillaModal' + villaId));
             myModal.show();
-        }
     });
 </script>
 @endif
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Logic Persentase Pengelola & Pemilik
+        function setupPersentaseLogic(inputPengelola, inputPemilik) {
+            if (!inputPengelola || !inputPemilik) return;
+
+            inputPengelola.addEventListener('input', function() {
+                let valA = parseInt(this.value) || 0;
+                if (valA > 100) { valA = 100; this.value = 100; }
+                inputPemilik.value = 100 - valA;
+            });
+
+            // Sinkronisasi nilai pemilik saat inisialisasi
+            let initialVal = parseInt(inputPengelola.value) || 0;
+            inputPemilik.value = 100 - initialVal;
+        }
+
+        // Setup modal create
+        setupPersentaseLogic(
+            document.getElementById('persenan_pengelola'),
+            document.getElementById('persenan_pemilik')
+        );
+
+        // Setup modal edit (loop over forms)
+        document.querySelectorAll('form').forEach(form => {
+            let inputPengelola = form.querySelector('input[name="persenan_pengelola"]');
+            let inputPemilik = form.querySelector('input[name="persenan_pemilik"]');
+            if (inputPengelola && inputPemilik && inputPengelola.id !== 'persenan_pengelola') {
+                setupPersentaseLogic(inputPengelola, inputPemilik);
+            }
+        });
+    });
+</script>
 @endsection

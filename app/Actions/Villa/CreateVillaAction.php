@@ -19,7 +19,8 @@ class CreateVillaAction
             'name' => $data['name'],
             'email' => $data['email'],
             'description' => $data['description'] ?? null,
-            // image handling would go here if implemented
+            'persenan_pengelola' => $data['persenan_pengelola'],
+            'persenan_pemilik' => $data['persenan_pemilik'],
         ]);
     }
 }
