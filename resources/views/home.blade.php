@@ -142,7 +142,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-end pe-4 py-3">
-                                                <div class="amount-badge bg-success bg-opacity-10 text-success">
+                                                <div class="amount-badge bg-success bg-opacity-10 text-dark">
                                                     +Rp {{ number_format($tx->amount, 0, ',', '.') }}
                                                 </div>
                                             </td>
@@ -176,7 +176,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-end pe-4 py-3">
-                                                <div class="amount-badge bg-danger bg-opacity-10 text-danger">
+                                                <div class="amount-badge bg-danger bg-opacity-10 text-dark">
                                                     -Rp {{ number_format($tx->amount, 0, ',', '.') }}
                                                 </div>
                                             </td>
@@ -210,7 +210,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-end pe-4 py-3">
-                                                <div class="amount-badge bg-warning bg-opacity-10 text-warning">
+                                                <div class="amount-badge bg-warning bg-opacity-10 text-dark">
                                                     Rp {{ number_format($tx->amount, 0, ',', '.') }}
                                                 </div>
                                             </td>
@@ -294,7 +294,7 @@
                 labels: { style: { colors: '#64748b', fontSize: '12px' } }
             },
             yaxis: {
-                labels: { 
+                labels: {
                     formatter: function (val) { return "Rp " + (val / 1000000).toFixed(1) + "jt" },
                     style: { colors: '#64748b', fontSize: '12px' }
                 }

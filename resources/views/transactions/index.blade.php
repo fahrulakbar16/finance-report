@@ -120,7 +120,7 @@
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <div>
                             <h6 class="text-muted fw-semibold mb-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Bagian Pengelola</h6>
-                            <h3 class="fw-bold mb-0 {{ $bagianPengelola >= 0 ? 'text-primary' : 'text-danger' }}">Rp {{ number_format($bagianPengelola, 0, ',', '.') }}</h3>
+                            <h3 class="fw-bold mb-0 {{ $bagianPengelola >= 0 ? 'text-dark' : 'text-danger' }}">Rp {{ number_format($bagianPengelola, 0, ',', '.') }}</h3>
                         </div>
                         <div class="icon-circle bg-primary bg-opacity-10 text-primary">
                             <i class="bi bi-person-badge fs-4"></i>
@@ -135,7 +135,7 @@
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <div>
                             <h6 class="text-muted fw-semibold mb-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Bagian Pemilik</h6>
-                            <h3 class="fw-bold mb-0 {{ $bagianPemilik >= 0 ? 'text-info' : 'text-danger' }}">Rp {{ number_format($bagianPemilik, 0, ',', '.') }}</h3>
+                            <h3 class="fw-bold mb-0 {{ $bagianPemilik >= 0 ? 'text-dark' : 'text-danger' }}">Rp {{ number_format($bagianPemilik, 0, ',', '.') }}</h3>
                         </div>
                         <div class="icon-circle bg-info bg-opacity-10 text-info">
                             <i class="bi bi-person-fill fs-4"></i>
@@ -244,7 +244,7 @@
                                             </span>
                                         </td>
                                         <td class="text-end pe-4">
-                                            <div class="amount-badge bg-success bg-opacity-10 text-success">
+                                            <div class="amount-badge bg-success bg-opacity-10 text-dark">
                                                 +Rp {{ number_format($transaction->amount, 0, ',', '.') }}
                                             </div>
                                         </td>
@@ -298,7 +298,7 @@
                                             </span>
                                         </td>
                                         <td class="text-end pe-4">
-                                            <div class="amount-badge bg-danger bg-opacity-10 text-danger">
+                                            <div class="amount-badge bg-danger bg-opacity-10 text-dark">
                                                 -Rp {{ number_format($transaction->amount, 0, ',', '.') }}
                                             </div>
                                         </td>
@@ -352,7 +352,7 @@
                                             </span>
                                         </td>
                                         <td class="text-end pe-4">
-                                            <div class="amount-badge bg-warning bg-opacity-10 text-warning">
+                                            <div class="amount-badge bg-warning bg-opacity-10 text-dark">
                                                 Rp {{ number_format($transaction->amount, 0, ',', '.') }}
                                             </div>
                                         </td>
