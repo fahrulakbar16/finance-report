@@ -145,6 +145,22 @@ class TransactionController extends Controller
         }
     }
 
+    public function update(StoreTransactionRequest $request, Transaction $transaction)
+    {
+        $data = $request->validated();
+
+        $transaction->update([
+            'villa_id' => $data['villa_id'],
+            'name' => $data['name'],
+            'amount' => $data['amount'],
+            'type' => $data['type'],
+            'date' => $data['date'],
+            'is_tanggungan_pemilik' => $data['type'] === 'expense' ? ($data['is_tanggungan_pemilik'] ?? false) : false,
+        ]);
+
+        return redirect()->back()->with('success', 'Transaksi berhasil diperbarui.');
+    }
+
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();

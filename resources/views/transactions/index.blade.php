@@ -220,7 +220,10 @@
                                     <th class="ps-4 py-3">Detail Transaksi</th>
                                     <th class="py-3">Tanggal</th>
                                     <th class="py-3">Villa</th>
-                                    <th class="text-end pe-4 py-3">Jumlah (Rp)</th>
+                                    <th class="text-end py-3">Jumlah (Rp)</th>
+                                    @role('pengelola')
+                                    <th class="text-end pe-4 py-3">Aksi</th>
+                                    @endrole
                                 </tr>
                             </thead>
                             <tbody>
@@ -246,14 +249,39 @@
                                                 <i class="bi bi-house-door text-primary me-1"></i> {{ $transaction->villa->name }}
                                             </span>
                                         </td>
-                                        <td class="text-end pe-4">
+                                        <td class="text-end {{ auth()->user()->hasRole('pengelola') ? '' : 'pe-4' }}">
                                             <div class="amount-badge bg-success bg-opacity-10 text-dark">
                                                 +Rp {{ number_format($transaction->amount, 0, ',', '.') }}
                                             </div>
                                         </td>
+                                        @role('pengelola')
+                                        <td class="text-end pe-4">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <button type="button" class="btn btn-light btn-sm rounded-3 edit-transaction"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editTransactionModal"
+                                                        data-id="{{ $transaction->id }}"
+                                                        data-villa="{{ $transaction->villa_id }}"
+                                                        data-name="{{ $transaction->name }}"
+                                                        data-amount="{{ $transaction->amount }}"
+                                                        data-type="{{ $transaction->type }}"
+                                                        data-date="{{ $transaction->date }}"
+                                                        data-tanggungan="{{ $transaction->is_tanggungan_pemilik ? '1' : '0' }}">
+                                                    <i class="bi bi-pencil text-primary"></i>
+                                                </button>
+                                                <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-light btn-sm rounded-3">
+                                                        <i class="bi bi-trash text-danger"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        @endrole
                                     </tr>
                                 @empty
-                                    <tr><td colspan="4" class="text-center py-5 text-muted">Belum ada pemasukan.</td></tr>
+                                    <tr><td colspan="{{ auth()->user()->hasRole('pengelola') ? '5' : '4' }}" class="text-center py-5 text-muted">Belum ada pemasukan.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -274,7 +302,10 @@
                                     <th class="ps-4 py-3">Detail Transaksi</th>
                                     <th class="py-3">Tanggal</th>
                                     <th class="py-3">Villa</th>
-                                    <th class="text-end pe-4 py-3">Jumlah (Rp)</th>
+                                    <th class="text-end py-3">Jumlah (Rp)</th>
+                                    @role('pengelola')
+                                    <th class="text-end pe-4 py-3">Aksi</th>
+                                    @endrole
                                 </tr>
                             </thead>
                             <tbody>
@@ -300,14 +331,39 @@
                                                 <i class="bi bi-house-door text-primary me-1"></i> {{ $transaction->villa->name }}
                                             </span>
                                         </td>
-                                        <td class="text-end pe-4">
+                                        <td class="text-end {{ auth()->user()->hasRole('pengelola') ? '' : 'pe-4' }}">
                                             <div class="amount-badge bg-danger bg-opacity-10 text-dark">
                                                 -Rp {{ number_format($transaction->amount, 0, ',', '.') }}
                                             </div>
                                         </td>
+                                        @role('pengelola')
+                                        <td class="text-end pe-4">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <button type="button" class="btn btn-light btn-sm rounded-3 edit-transaction"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editTransactionModal"
+                                                        data-id="{{ $transaction->id }}"
+                                                        data-villa="{{ $transaction->villa_id }}"
+                                                        data-name="{{ $transaction->name }}"
+                                                        data-amount="{{ $transaction->amount }}"
+                                                        data-type="{{ $transaction->type }}"
+                                                        data-date="{{ $transaction->date }}"
+                                                        data-tanggungan="{{ $transaction->is_tanggungan_pemilik ? '1' : '0' }}">
+                                                    <i class="bi bi-pencil text-primary"></i>
+                                                </button>
+                                                <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-light btn-sm rounded-3">
+                                                        <i class="bi bi-trash text-danger"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        @endrole
                                     </tr>
                                 @empty
-                                    <tr><td colspan="4" class="text-center py-5 text-muted">Belum ada pengeluaran.</td></tr>
+                                    <tr><td colspan="{{ auth()->user()->hasRole('pengelola') ? '5' : '4' }}" class="text-center py-5 text-muted">Belum ada pengeluaran.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -328,7 +384,10 @@
                                     <th class="ps-4 py-3">Detail Transaksi</th>
                                     <th class="py-3">Tanggal</th>
                                     <th class="py-3">Villa</th>
-                                    <th class="text-end pe-4 py-3">Jumlah (Rp)</th>
+                                    <th class="text-end py-3">Jumlah (Rp)</th>
+                                    @role('pengelola')
+                                    <th class="text-end pe-4 py-3">Aksi</th>
+                                    @endrole
                                 </tr>
                             </thead>
                             <tbody>
@@ -354,14 +413,39 @@
                                                 <i class="bi bi-house-door text-primary me-1"></i> {{ $transaction->villa->name }}
                                             </span>
                                         </td>
-                                        <td class="text-end pe-4">
+                                        <td class="text-end {{ auth()->user()->hasRole('pengelola') ? '' : 'pe-4' }}">
                                             <div class="amount-badge bg-warning bg-opacity-10 text-dark">
                                                 Rp {{ number_format($transaction->amount, 0, ',', '.') }}
                                             </div>
                                         </td>
+                                        @role('pengelola')
+                                        <td class="text-end pe-4">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <button type="button" class="btn btn-light btn-sm rounded-3 edit-transaction"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editTransactionModal"
+                                                        data-id="{{ $transaction->id }}"
+                                                        data-villa="{{ $transaction->villa_id }}"
+                                                        data-name="{{ $transaction->name }}"
+                                                        data-amount="{{ $transaction->amount }}"
+                                                        data-type="{{ $transaction->type }}"
+                                                        data-date="{{ $transaction->date }}"
+                                                        data-tanggungan="{{ $transaction->is_tanggungan_pemilik ? '1' : '0' }}">
+                                                    <i class="bi bi-pencil text-primary"></i>
+                                                </button>
+                                                <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-light btn-sm rounded-3">
+                                                        <i class="bi bi-trash text-danger"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        @endrole
                                     </tr>
                                 @empty
-                                    <tr><td colspan="4" class="text-center py-5 text-muted">Belum ada tanggungan pemilik.</td></tr>
+                                    <tr><td colspan="{{ auth()->user()->hasRole('pengelola') ? '5' : '4' }}" class="text-center py-5 text-muted">Belum ada tanggungan pemilik.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -485,3 +569,124 @@
   </div>
 </div>
 @endsection
+
+@push('scripts')
+<!-- Modal Edit Transaction -->
+<div class="modal fade" id="editTransactionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom-0 p-4 pb-3">
+        <div>
+            <h5 class="modal-title fw-bold text-dark mb-1">Edit Transaksi</h5>
+            <p class="text-muted small mb-0">Perbarui detail transaksi villa.</p>
+        </div>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="editTransactionForm" method="POST" action="">
+          @csrf
+          @method('PUT')
+          <div class="modal-body p-4 pt-2">
+
+              <div class="row g-4">
+                  <div class="col-md-6">
+                      <label for="edit_villa_id" class="form-label fw-medium text-dark small">Pilih Villa</label>
+                      <select name="villa_id" id="edit_villa_id" class="form-select form-select-lg border-light bg-light rounded-3" required style="font-size: 1rem;">
+                          @foreach($villas as $villa)
+                              <option value="{{ $villa->id }}">{{ $villa->name }}</option>
+                          @endforeach
+                      </select>
+                  </div>
+
+                  <div class="col-md-6">
+                      <label for="edit_date" class="form-label fw-medium text-dark small">Tanggal Transaksi</label>
+                      <input type="date" name="date" id="edit_date" class="form-control form-control-lg border-light bg-light rounded-3" required style="font-size: 1rem;">
+                  </div>
+
+                  <div class="col-12">
+                      <label for="edit_name" class="form-label fw-medium text-dark small">Keterangan Transaksi</label>
+                      <input type="text" name="name" id="edit_name" class="form-control form-control-lg border-light bg-light rounded-3" required style="font-size: 1rem;">
+                  </div>
+
+                  <div class="col-md-6">
+                      <label for="edit_type" class="form-label fw-medium text-dark small">Tipe Transaksi</label>
+                      <select name="type" id="edit_type" class="form-select form-select-lg border-light bg-light rounded-3" required style="font-size: 1rem;" onchange="toggleEditTanggungan(this.value)">
+                          <option value="income">Pemasukan (Income)</option>
+                          <option value="expense">Pengeluaran (Expense)</option>
+                      </select>
+                  </div>
+
+                  <div class="col-md-6">
+                      <label for="edit_amount" class="form-label fw-medium text-dark small">Jumlah Rupiah (Rp)</label>
+                      <div class="input-group input-group-lg">
+                          <span class="input-group-text border-light bg-light rounded-start-3 border-end-0 text-muted" style="font-size: 1rem;">Rp</span>
+                          <input type="number" name="amount" id="edit_amount" class="form-control border-light bg-light rounded-end-3 border-start-0" required style="font-size: 1rem;">
+                      </div>
+                  </div>
+
+                  <div class="col-md-12" id="edit_tanggungan_pemilik_wrapper" style="display: none;">
+                      <div class="p-3 bg-light rounded-3 border border-light">
+                          <label class="form-label fw-bold text-dark small d-block mb-2">Apakah ini Tanggungan Pemilik?</label>
+                          <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="is_tanggungan_pemilik" id="edit_tanggungan_no" value="0">
+                              <label class="form-check-label text-dark" for="edit_tanggungan_no">Tidak (Dibagi sesuai persentase villa)</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="is_tanggungan_pemilik" id="edit_tanggungan_yes" value="1">
+                              <label class="form-check-label text-dark" for="edit_tanggungan_yes">Ya (Dipotong penuh dari bagian Pemilik)</label>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer border-top-0 p-4 pt-2">
+            <button type="button" class="btn btn-light px-4 py-2 rounded-3 fw-medium" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-medium d-flex align-items-center gap-2 shadow-sm">
+                <i class="bi bi-save"></i> Simpan Perubahan
+            </button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editButtons = document.querySelectorAll('.edit-transaction');
+        const editForm = document.getElementById('editTransactionForm');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const villaId = this.getAttribute('data-villa');
+                const name = this.getAttribute('data-name');
+                const amount = this.getAttribute('data-amount');
+                const type = this.getAttribute('data-type');
+                const date = this.getAttribute('data-date');
+                const tanggungan = this.getAttribute('data-tanggungan');
+
+                editForm.action = `/transactions/${id}`;
+                document.getElementById('edit_villa_id').value = villaId;
+                document.getElementById('edit_name').value = name;
+                document.getElementById('edit_amount').value = amount;
+                document.getElementById('edit_type').value = type;
+                document.getElementById('edit_date').value = date;
+
+                if (type === 'expense') {
+                    document.getElementById('edit_tanggungan_pemilik_wrapper').style.display = 'block';
+                    if (tanggungan === '1') {
+                        document.getElementById('edit_tanggungan_yes').checked = true;
+                    } else {
+                        document.getElementById('edit_tanggungan_no').checked = true;
+                    }
+                } else {
+                    document.getElementById('edit_tanggungan_pemilik_wrapper').style.display = 'none';
+                }
+            });
+        });
+    });
+
+    function toggleEditTanggungan(type) {
+        document.getElementById('edit_tanggungan_pemilik_wrapper').style.display = type === 'expense' ? 'block' : 'none';
+    }
+</script>
+@endpush
