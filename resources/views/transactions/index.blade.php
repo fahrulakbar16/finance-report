@@ -14,6 +14,38 @@
     .fs-7 {
         font-size: 0.85rem;
     }
+    .table-custom thead th {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        background-color: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .table-custom tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .table-custom tbody tr:hover {
+        background-color: #f8fafc;
+        transform: scale(1.001);
+    }
+    .amount-badge {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-block;
+    }
+    .nav-tabs .nav-link.active {
+        color: var(--bs-primary) !important;
+        border-bottom: 2px solid var(--bs-primary) !important;
+        background: transparent;
+    }
+    .nav-tabs .nav-link:hover {
+        color: var(--bs-primary) !important;
+    }
 </style>
 
 <div class="container-fluid px-0">
@@ -156,85 +188,189 @@
     </div>
 
     <!-- Transactions List -->
-    <div class="card mt-4">
-        <div class="card-header d-flex justify-content-between align-items-center border-0 pt-4 pb-3 px-4 bg-white" style="border-bottom: 1px solid rgba(0,0,0,.125) !important;">
-            <span class="fs-5 fw-bold text-dark">Riwayat Transaksi Terbaru</span>
+    <div class="card mt-4 border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-dark mb-0">Riwayat Transaksi</h5>
+            </div>
+            <ul class="nav nav-tabs border-0 gap-3" id="transactionIndexTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active border-0 fw-semibold px-0 text-muted transition-all" id="index-income-tab" data-bs-toggle="tab" data-bs-target="#index-income-pane" type="button" role="tab" style="font-size: 0.9rem;">Pemasukan</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link border-0 fw-semibold px-0 text-muted transition-all" id="index-expense-tab" data-bs-toggle="tab" data-bs-target="#index-expense-pane" type="button" role="tab" style="font-size: 0.9rem;">Pengeluaran</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link border-0 fw-semibold px-0 text-muted transition-all" id="index-owner-tab" data-bs-toggle="tab" data-bs-target="#index-owner-pane" type="button" role="tab" style="font-size: 0.9rem;">Tanggungan Pemilik</button>
+                </li>
+            </ul>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 align-middle">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4 py-3">Detail Transaksi</th>
-                        <th class="py-3">Tanggal</th>
-                        <th class="py-3">Villa</th>
-                        <th class="py-3">Tipe</th>
-                        <th class="text-end pe-4 py-3">Jumlah (Rp)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($transactions as $transaction)
-                        <tr>
-                            <td class="ps-4 py-3 text-dark">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-primary bg-opacity-10 text-primary rounded p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                        @if($transaction->type == 'income')
-                                            <i class="bi bi-arrow-down-left fs-5"></i>
-                                        @else
-                                            <i class="bi bi-arrow-up-right fs-5"></i>
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <div class="fw-medium">{{ $transaction->name }}</div>
-                                        <small class="text-muted">Keterangan Transaksi</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-dark fw-medium">{{ \Carbon\Carbon::parse($transaction->date)->format('d M Y') }}</div>
-                                <small class="text-muted">{{ \Carbon\Carbon::parse($transaction->date)->diffForHumans() }}</small>
-                            </td>
-                            <td>
-                                <span class="badge rounded-pill bg-light text-dark border px-2 py-1 fw-medium" style="font-size: 0.75rem;">
-                                    <i class="bi bi-house-door me-1"></i> {{ $transaction->villa->name }}
-                                </span>
-                            </td>
-                            <td>
-                                @if($transaction->type == 'income')
-                                    <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.75rem;">
-                                        Pemasukan
-                                    </span>
-                                @else
-                                    <div class="d-flex flex-column align-items-start gap-1">
-                                        <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.75rem;">
-                                            Pengeluaran
-                                        </span>
-                                        @if($transaction->is_tanggungan_pemilik)
-                                        <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.75rem;">
-                                            Tanggungan Pemilik
-                                        </span>
-                                        @endif
-                                    </div>
-                                @endif
-                            </td>
-                            <td class="text-end pe-4 fw-bold {{ $transaction->type == 'income' ? 'text-success' : 'text-danger' }}">
-                                {{ $transaction->type == 'income' ? '+' : '-' }}Rp {{ number_format($transaction->amount, 0, ',', '.') }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-5 text-muted">Belum ada data transaksi.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        <div class="card-body p-0">
+            <div class="tab-content" id="transactionIndexTabsContent">
+                <!-- Income Pane -->
+                <div class="tab-pane fade show active" id="index-income-pane" role="tabpanel" tabindex="0">
+                    <div class="table-responsive">
+                        <table class="table table-custom mb-0 align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4 py-3">Detail Transaksi</th>
+                                    <th class="py-3">Tanggal</th>
+                                    <th class="py-3">Villa</th>
+                                    <th class="text-end pe-4 py-3">Jumlah (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($incomeTransactions as $transaction)
+                                    <tr>
+                                        <td class="ps-4 py-3 text-dark">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center p-2 me-3" style="width: 44px; height: 44px;">
+                                                    <i class="bi bi-arrow-up-right fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">{{ $transaction->name }}</div>
+                                                    <small class="text-muted">ID: #{{ str_pad($transaction->id, 5, '0', STR_PAD_LEFT) }} &bull; Pemasukan Villa</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-dark fw-semibold">{{ \Carbon\Carbon::parse($transaction->date)->format('d M Y') }}</div>
+                                            <small class="text-muted small">{{ \Carbon\Carbon::parse($transaction->date)->diffForHumans() }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge rounded-pill bg-white text-dark border shadow-sm px-3 py-2 fw-medium">
+                                                <i class="bi bi-house-door text-primary me-1"></i> {{ $transaction->villa->name }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="amount-badge bg-success bg-opacity-10 text-success">
+                                                +Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="4" class="text-center py-5 text-muted">Belum ada pemasukan.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    @if($incomeTransactions->hasPages())
+                        <div class="px-4 py-3 border-top bg-light bg-opacity-50">
+                            {{ $incomeTransactions->withQueryString()->links() }}
+                        </div>
+                    @endif
+                </div>
 
-        @if($transactions->hasPages())
-        <div class="card-footer bg-white border-top py-3 px-4">
-            {{ $transactions->withQueryString()->links() }}
+                <!-- Expense Pane -->
+                <div class="tab-pane fade" id="index-expense-pane" role="tabpanel" tabindex="0">
+                    <div class="table-responsive">
+                        <table class="table table-custom mb-0 align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4 py-3">Detail Transaksi</th>
+                                    <th class="py-3">Tanggal</th>
+                                    <th class="py-3">Villa</th>
+                                    <th class="text-end pe-4 py-3">Jumlah (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($expenseTransactions as $transaction)
+                                    <tr>
+                                        <td class="ps-4 py-3 text-dark">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-danger bg-opacity-10 text-danger rounded-3 d-flex align-items-center justify-content-center p-2 me-3" style="width: 44px; height: 44px;">
+                                                    <i class="bi bi-arrow-down-left fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">{{ $transaction->name }}</div>
+                                                    <small class="text-muted">ID: #{{ str_pad($transaction->id, 5, '0', STR_PAD_LEFT) }} &bull; Pengeluaran Operasional</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-dark fw-semibold">{{ \Carbon\Carbon::parse($transaction->date)->format('d M Y') }}</div>
+                                            <small class="text-muted small">{{ \Carbon\Carbon::parse($transaction->date)->diffForHumans() }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge rounded-pill bg-white text-dark border shadow-sm px-3 py-2 fw-medium">
+                                                <i class="bi bi-house-door text-primary me-1"></i> {{ $transaction->villa->name }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="amount-badge bg-danger bg-opacity-10 text-danger">
+                                                -Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="4" class="text-center py-5 text-muted">Belum ada pengeluaran.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    @if($expenseTransactions->hasPages())
+                        <div class="px-4 py-3 border-top bg-light bg-opacity-50">
+                            {{ $expenseTransactions->withQueryString()->links() }}
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Owner Expense Pane -->
+                <div class="tab-pane fade" id="index-owner-pane" role="tabpanel" tabindex="0">
+                    <div class="table-responsive">
+                        <table class="table table-custom mb-0 align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4 py-3">Detail Transaksi</th>
+                                    <th class="py-3">Tanggal</th>
+                                    <th class="py-3">Villa</th>
+                                    <th class="text-end pe-4 py-3">Jumlah (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($ownerTransactions as $transaction)
+                                    <tr>
+                                        <td class="ps-4 py-3 text-dark">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-warning bg-opacity-10 text-warning rounded-3 d-flex align-items-center justify-content-center p-2 me-3" style="width: 44px; height: 44px;">
+                                                    <i class="bi bi-person-exclamation fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">{{ $transaction->name }}</div>
+                                                    <small class="text-muted">ID: #{{ str_pad($transaction->id, 5, '0', STR_PAD_LEFT) }} &bull; Tanggungan Pemilik</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-dark fw-semibold">{{ \Carbon\Carbon::parse($transaction->date)->format('d M Y') }}</div>
+                                            <small class="text-muted small">{{ \Carbon\Carbon::parse($transaction->date)->diffForHumans() }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge rounded-pill bg-white text-dark border shadow-sm px-3 py-2 fw-medium">
+                                                <i class="bi bi-house-door text-primary me-1"></i> {{ $transaction->villa->name }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="amount-badge bg-warning bg-opacity-10 text-warning">
+                                                Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="4" class="text-center py-5 text-muted">Belum ada tanggungan pemilik.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    @if($ownerTransactions->hasPages())
+                        <div class="px-4 py-3 border-top bg-light bg-opacity-50">
+                            {{ $ownerTransactions->withQueryString()->links() }}
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
-        @endif
     </div>
 </div>
 

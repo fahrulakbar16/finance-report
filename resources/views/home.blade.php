@@ -102,38 +102,126 @@
     <!-- Recent Transactions -->
     <div class="col-md-7">
         <div class="card border-0 shadow-sm h-100" style="border-radius: var(--fi-radius);">
-            <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
-                <h5 class="fw-bold text-dark mb-0">Transaksi Terakhir</h5>
-                <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-light text-primary fw-medium px-3">Semua <i class="bi bi-arrow-right small ms-1"></i></a>
+            <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-dark mb-0">Riwayat Transaksi</h5>
+                    <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-light text-primary fw-medium px-3">Semua <i class="bi bi-arrow-right small ms-1"></i></a>
+                </div>
+                <ul class="nav nav-tabs border-0 gap-3" id="transactionTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active border-0 fw-semibold px-0 text-muted transition-all" id="income-tab" data-bs-toggle="tab" data-bs-target="#income-pane" type="button" role="tab" style="font-size: 0.85rem;">Pemasukan</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link border-0 fw-semibold px-0 text-muted transition-all" id="expense-tab" data-bs-toggle="tab" data-bs-target="#expense-pane" type="button" role="tab" style="font-size: 0.85rem;">Pengeluaran</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link border-0 fw-semibold px-0 text-muted transition-all" id="owner-tab" data-bs-toggle="tab" data-bs-target="#owner-pane" type="button" role="tab" style="font-size: 0.85rem;">Tanggungan Pemilik</button>
+                    </li>
+                </ul>
             </div>
-            <div class="card-body px-0 pt-4">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <tbody>
-                            @forelse($recentTransactions as $tx)
-                                <tr>
-                                    <td class="ps-4 py-3">
-                                        <div class="d-flex align-items-center">
-                                            <div class="bg-{{ $tx->type == 'income' ? 'success' : 'danger' }} bg-opacity-10 text-{{ $tx->type == 'income' ? 'success' : 'danger' }} rounded-circle d-flex align-items-center justify-content-center p-2 me-3" style="width: 36px; height: 36px;">
-                                                <i class="bi bi-{{ $tx->type == 'income' ? 'arrow-up' : 'arrow-down' }}-short fs-4"></i>
-                                            </div>
-                                            <div>
-                                                <div class="fw-semibold text-dark small">{{ $tx->name }}</div>
-                                                <div class="text-muted" style="font-size: 0.75rem;">{{ $tx->villa->name }} &bull; {{ \Carbon\Carbon::parse($tx->date)->format('d M') }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-end pe-4 py-3">
-                                        <div class="fw-bold text-{{ $tx->type == 'income' ? 'success' : 'danger' }} small">
-                                            {{ $tx->type == 'income' ? '+' : '-' }}Rp {{ number_format($tx->amount, 0, ',', '.') }}
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td class="text-center py-4 text-muted small">Belum ada transaksi</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+            <div class="card-body px-0 pt-2">
+                <div class="tab-content" id="transactionTabsContent">
+                    <!-- Income Pane -->
+                    <div class="tab-pane fade show active" id="income-pane" role="tabpanel" tabindex="0">
+                        <div class="table-responsive">
+                            <table class="table table-custom mb-0 align-middle">
+                                <tbody>
+                                    @forelse($recentIncome as $tx)
+                                        <tr>
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center p-2 me-3" style="width: 40px; height: 40px;">
+                                                        <i class="bi bi-arrow-up-right fs-5"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold text-dark mb-0" style="font-size: 0.9rem;">{{ $tx->name }}</div>
+                                                        <div class="text-muted" style="font-size: 0.75rem;">
+                                                            <span class="text-primary fw-medium">{{ $tx->villa->name }}</span> &bull; {{ \Carbon\Carbon::parse($tx->date)->format('d M, Y') }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-end pe-4 py-3">
+                                                <div class="amount-badge bg-success bg-opacity-10 text-success">
+                                                    +Rp {{ number_format($tx->amount, 0, ',', '.') }}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr><td class="text-center py-5 text-muted small">Belum ada pemasukan</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Expense Pane -->
+                    <div class="tab-pane fade" id="expense-pane" role="tabpanel" tabindex="0">
+                        <div class="table-responsive">
+                            <table class="table table-custom mb-0 align-middle">
+                                <tbody>
+                                    @forelse($recentExpense as $tx)
+                                        <tr>
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="bg-danger bg-opacity-10 text-danger rounded-3 d-flex align-items-center justify-content-center p-2 me-3" style="width: 40px; height: 40px;">
+                                                        <i class="bi bi-arrow-down-left fs-5"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold text-dark mb-0" style="font-size: 0.9rem;">{{ $tx->name }}</div>
+                                                        <div class="text-muted" style="font-size: 0.75rem;">
+                                                            <span class="text-primary fw-medium">{{ $tx->villa->name }}</span> &bull; {{ \Carbon\Carbon::parse($tx->date)->format('d M, Y') }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-end pe-4 py-3">
+                                                <div class="amount-badge bg-danger bg-opacity-10 text-danger">
+                                                    -Rp {{ number_format($tx->amount, 0, ',', '.') }}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr><td class="text-center py-5 text-muted small">Belum ada pengeluaran</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Owner Expense Pane -->
+                    <div class="tab-pane fade" id="owner-pane" role="tabpanel" tabindex="0">
+                        <div class="table-responsive">
+                            <table class="table table-custom mb-0 align-middle">
+                                <tbody>
+                                    @forelse($recentOwnerExpense as $tx)
+                                        <tr>
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="bg-warning bg-opacity-10 text-warning rounded-3 d-flex align-items-center justify-content-center p-2 me-3" style="width: 40px; height: 40px;">
+                                                        <i class="bi bi-person-exclamation fs-5"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold text-dark mb-0" style="font-size: 0.9rem;">{{ $tx->name }}</div>
+                                                        <div class="text-muted" style="font-size: 0.75rem;">
+                                                            <span class="text-primary fw-medium">{{ $tx->villa->name }}</span> &bull; {{ \Carbon\Carbon::parse($tx->date)->format('d M, Y') }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-end pe-4 py-3">
+                                                <div class="amount-badge bg-warning bg-opacity-10 text-warning">
+                                                    Rp {{ number_format($tx->amount, 0, ',', '.') }}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr><td class="text-center py-5 text-muted small">Belum ada tanggungan pemilik</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -226,5 +314,31 @@
     .transition-all { transition: all 0.3s ease; }
     .hover-shadow-sm:hover { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     .leading-relaxed { line-height: 1.625; }
+    .nav-tabs .nav-link.active {
+        color: var(--bs-primary) !important;
+        border-bottom: 2px solid var(--bs-primary) !important;
+        background: transparent;
+    }
+    .nav-tabs .nav-link:hover {
+        color: var(--bs-primary) !important;
+    }
+    .table-custom tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .table-custom tbody tr:last-child {
+        border-bottom: none;
+    }
+    .table-custom tbody tr:hover {
+        background-color: #f8fafc;
+        transform: scale(1.002);
+    }
+    .amount-badge {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: inline-block;
+    }
 </style>
 @endsection

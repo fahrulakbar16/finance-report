@@ -46,7 +46,9 @@ class HomeController extends Controller
         $chartData = $this->getMonthlyTrendData();
 
         // 3. Data Tabel & List
-        $recentTransactions = Transaction::with('villa')->latest('date')->take(5)->get();
+        $recentIncome = Transaction::with('villa')->where('type', 'income')->latest('date')->take(5)->get();
+        $recentExpense = Transaction::with('villa')->where('type', 'expense')->where('is_tanggungan_pemilik', false)->latest('date')->take(5)->get();
+        $recentOwnerExpense = Transaction::with('villa')->where('type', 'expense')->where('is_tanggungan_pemilik', true)->latest('date')->take(5)->get();
         $recurringTransactions = RecurringTransaction::with('villa')->take(5)->get();
 
         // 4. AI Insight (Rule-based)
@@ -63,7 +65,7 @@ class HomeController extends Controller
             $villaIncome = $villa->transactions->where('type', 'income')->sum('amount');
             $villaRegularExpense = $villa->transactions->where('type', 'expense')->where('is_tanggungan_pemilik', false)->sum('amount');
             $villaTanggunganExpense = $villa->transactions->where('type', 'expense')->where('is_tanggungan_pemilik', true)->sum('amount');
-            
+
             $villaProfit = $villaIncome - $villaRegularExpense;
 
             $bagianPengelolaMonth += ($villaProfit * ($villa->persenan_pengelola / 100));
@@ -76,7 +78,9 @@ class HomeController extends Controller
             'bagianPengelolaMonth',
             'bagianPemilikMonth',
             'chartData',
-            'recentTransactions',
+            'recentIncome',
+            'recentExpense',
+            'recentOwnerExpense',
             'recurringTransactions',
             'aiInsight'
         ));

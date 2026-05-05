@@ -26,7 +26,9 @@ class TransactionController extends Controller
             $query->whereDate('date', '<=', $request->end_date);
         }
 
-        $transactions = $query->orderBy('date', 'desc')->paginate(15);
+        $incomeTransactions = (clone $query)->where('type', 'income')->orderBy('date', 'desc')->paginate(10, ['*'], 'page_income');
+        $expenseTransactions = (clone $query)->where('type', 'expense')->where('is_tanggungan_pemilik', false)->orderBy('date', 'desc')->paginate(10, ['*'], 'page_expense');
+        $ownerTransactions = (clone $query)->where('type', 'expense')->where('is_tanggungan_pemilik', true)->orderBy('date', 'desc')->paginate(10, ['*'], 'page_owner');
         
         $villas = Villa::all();
 
@@ -74,7 +76,16 @@ class TransactionController extends Controller
             }
         }
 
-        return view('transactions.index', compact('transactions', 'villas', 'totalIncome', 'totalExpense', 'bagianPengelola', 'bagianPemilik'));
+        return view('transactions.index', compact(
+            'incomeTransactions', 
+            'expenseTransactions', 
+            'ownerTransactions', 
+            'villas', 
+            'totalIncome', 
+            'totalExpense', 
+            'bagianPengelola', 
+            'bagianPemilik'
+        ));
     }
 
     public function store(StoreTransactionRequest $request)
