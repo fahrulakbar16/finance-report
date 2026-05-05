@@ -13,6 +13,11 @@ class TransactionController extends Controller
     {
         $query = Transaction::query()->with('villa');
 
+        // Restrict by Owner
+        if (auth()->user()->hasRole('pemilik')) {
+            $query->whereIn('villa_id', auth()->user()->villas->pluck('id'));
+        }
+
         // Filter by Villa
         if ($request->filled('villa_id')) {
             $query->where('villa_id', $request->villa_id);
@@ -29,26 +34,28 @@ class TransactionController extends Controller
         $incomeTransactions = (clone $query)->where('type', 'income')->orderBy('date', 'desc')->paginate(10, ['*'], 'page_income');
         $expenseTransactions = (clone $query)->where('type', 'expense')->where('is_tanggungan_pemilik', false)->orderBy('date', 'desc')->paginate(10, ['*'], 'page_expense');
         $ownerTransactions = (clone $query)->where('type', 'expense')->where('is_tanggungan_pemilik', true)->orderBy('date', 'desc')->paginate(10, ['*'], 'page_owner');
-        
-        $villas = Villa::all();
+
+        $villas = auth()->user()->hasRole('pemilik')
+            ? auth()->user()->villas
+            : Villa::all();
 
         $statsQuery = (clone $query)->reorder();
         $totalIncome = (clone $statsQuery)->where('type', 'income')->sum('amount');
         $totalExpense = (clone $statsQuery)->where('type', 'expense')->sum('amount');
-        
+
         $villasStats = (clone $statsQuery)
             ->selectRaw('villa_id, type, is_tanggungan_pemilik, SUM(amount) as total')
             ->groupBy('villa_id', 'type', 'is_tanggungan_pemilik')
             ->get();
-            
+
         $bagianPengelola = 0;
         $bagianPemilik = 0;
-        
+
         $villasData = $villas->keyBy('id');
-        
+
         $villaProfits = [];
         $tanggunganPemilik = [];
-        
+
         foreach ($villasStats as $stat) {
             if (!isset($villaProfits[$stat->villa_id])) {
                 $villaProfits[$stat->villa_id] = 0;
@@ -56,7 +63,7 @@ class TransactionController extends Controller
             if (!isset($tanggunganPemilik[$stat->villa_id])) {
                 $tanggunganPemilik[$stat->villa_id] = 0;
             }
-            
+
             if ($stat->type == 'income') {
                 $villaProfits[$stat->villa_id] += $stat->total;
             } else {
@@ -67,7 +74,7 @@ class TransactionController extends Controller
                 }
             }
         }
-        
+
         foreach ($villaProfits as $villa_id => $profit) {
             $villa = $villasData[$villa_id] ?? null;
             if ($villa) {
@@ -77,13 +84,13 @@ class TransactionController extends Controller
         }
 
         return view('transactions.index', compact(
-            'incomeTransactions', 
-            'expenseTransactions', 
-            'ownerTransactions', 
-            'villas', 
-            'totalIncome', 
-            'totalExpense', 
-            'bagianPengelola', 
+            'incomeTransactions',
+            'expenseTransactions',
+            'ownerTransactions',
+            'villas',
+            'totalIncome',
+            'totalExpense',
+            'bagianPengelola',
             'bagianPemilik'
         ));
     }

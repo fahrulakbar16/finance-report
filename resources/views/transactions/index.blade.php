@@ -150,6 +150,7 @@
     <div class="card border-0 shadow-sm mb-4 rounded-4">
         <div class="card-body p-4">
             <form action="{{ route('transactions.index') }}" method="GET" class="row g-3 align-items-center">
+                @unlessrole('pemilik')
                 <div class="col-md-3">
                     <div class="form-floating">
                         <select name="villa_id" id="villa_id" class="form-select border-0 bg-light rounded-3" style="box-shadow: none;">
@@ -163,19 +164,21 @@
                         <label for="villa_id">Filter Villa</label>
                     </div>
                 </div>
-                <div class="col-md-3">
+                @endunlessrole
+
+                <div class="{{ auth()->user()->hasRole('pemilik') ? 'col-md-4' : 'col-md-3' }}">
                     <div class="form-floating">
                         <input type="date" name="start_date" id="start_date" class="form-control border-0 bg-light rounded-3" style="box-shadow: none;" value="{{ request('start_date') }}">
                         <label for="start_date">Dari Tanggal</label>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="{{ auth()->user()->hasRole('pemilik') ? 'col-md-4' : 'col-md-3' }}">
                     <div class="form-floating">
                         <input type="date" name="end_date" id="end_date" class="form-control border-0 bg-light rounded-3" style="box-shadow: none;" value="{{ request('end_date') }}">
                         <label for="end_date">Sampai Tanggal</label>
                     </div>
                 </div>
-                <div class="col-md-3 d-flex gap-2">
+                <div class="{{ auth()->user()->hasRole('pemilik') ? 'col-md-4' : 'col-md-3' }} d-flex gap-2">
                     <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center flex-grow-1 rounded-3" style="height: 58px;">
                         <i class="bi bi-search me-2"></i> Terapkan
                     </button>
