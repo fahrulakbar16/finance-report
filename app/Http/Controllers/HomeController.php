@@ -31,32 +31,77 @@ class HomeController extends Controller
         $startOfMonth = $now->copy()->startOfMonth();
         $endOfMonth = $now->copy()->endOfMonth();
 
+        $user = auth()->user();
+        $isPemilik = $user->hasRole('pemilik');
+        $userVillaIds = $isPemilik ? $user->villas()->pluck('id') : null;
+
         // 1. Widget Stats (Bulan Ini)
         $totalIncomeMonth = Transaction::where('type', 'income')
+            ->when($isPemilik, function ($query) use ($userVillaIds) {
+                return $query->whereIn('villa_id', $userVillaIds);
+            })
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
 
         $totalExpenseMonth = Transaction::where('type', 'expense')
+            ->when($isPemilik, function ($query) use ($userVillaIds) {
+                return $query->whereIn('villa_id', $userVillaIds);
+            })
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
 
         $balanceMonth = $totalIncomeMonth - $totalExpenseMonth;
 
         // 2. Data Grafik (6 Bulan Terakhir)
-        $chartData = $this->getMonthlyTrendData();
+        $chartData = $this->getMonthlyTrendData($isPemilik, $userVillaIds);
 
         // 3. Data Tabel & List
-        $recentIncome = Transaction::with('villa')->where('type', 'income')->latest('date')->take(5)->get();
-        $recentExpense = Transaction::with('villa')->where('type', 'expense')->where('is_tanggungan_pemilik', false)->latest('date')->take(5)->get();
-        $recentOwnerExpense = Transaction::with('villa')->where('type', 'expense')->where('is_tanggungan_pemilik', true)->latest('date')->take(5)->get();
-        $recurringTransactions = RecurringTransaction::with('villa')->take(5)->get();
+        $recentIncome = Transaction::with('villa')
+            ->when($isPemilik, function ($query) use ($userVillaIds) {
+                return $query->whereIn('villa_id', $userVillaIds);
+            })
+            ->where('type', 'income')
+            ->latest('date')
+            ->take(5)
+            ->get();
+
+        $recentExpense = Transaction::with('villa')
+            ->when($isPemilik, function ($query) use ($userVillaIds) {
+                return $query->whereIn('villa_id', $userVillaIds);
+            })
+            ->where('type', 'expense')
+            ->where('is_tanggungan_pemilik', false)
+            ->latest('date')
+            ->take(5)
+            ->get();
+
+        $recentOwnerExpense = Transaction::with('villa')
+            ->when($isPemilik, function ($query) use ($userVillaIds) {
+                return $query->whereIn('villa_id', $userVillaIds);
+            })
+            ->where('type', 'expense')
+            ->where('is_tanggungan_pemilik', true)
+            ->latest('date')
+            ->take(5)
+            ->get();
+
+        $recurringTransactions = RecurringTransaction::with('villa')
+            ->when($isPemilik, function ($query) use ($userVillaIds) {
+                return $query->whereIn('villa_id', $userVillaIds);
+            })
+            ->take(5)
+            ->get();
 
         // 4. AI Insight (Rule-based)
         $aiInsight = $this->generateAiInsight($totalIncomeMonth, $totalExpenseMonth, $balanceMonth);
 
         $villas = \App\Models\Villa::with(['transactions' => function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('date', [$startOfMonth, $endOfMonth]);
-        }])->get();
+        }])
+        ->when($isPemilik, function ($query) use ($user) {
+            return $query->where('pemilik_id', $user->id);
+        })
+        ->get();
 
         $bagianPengelolaMonth = 0;
         $bagianPemilikMonth = 0;
@@ -86,7 +131,7 @@ class HomeController extends Controller
         ));
     }
 
-    private function getMonthlyTrendData()
+    private function getMonthlyTrendData($isPemilik = false, $userVillaIds = null)
     {
         $labels = [];
         $incomeData = [];
@@ -100,10 +145,16 @@ class HomeController extends Controller
             $end = $month->copy()->endOfMonth();
 
             $incomeData[] = Transaction::where('type', 'income')
+                ->when($isPemilik, function ($query) use ($userVillaIds) {
+                    return $query->whereIn('villa_id', $userVillaIds);
+                })
                 ->whereBetween('date', [$start, $end])
                 ->sum('amount');
 
             $expenseData[] = Transaction::where('type', 'expense')
+                ->when($isPemilik, function ($query) use ($userVillaIds) {
+                    return $query->whereIn('villa_id', $userVillaIds);
+                })
                 ->whereBetween('date', [$start, $end])
                 ->sum('amount');
         }
