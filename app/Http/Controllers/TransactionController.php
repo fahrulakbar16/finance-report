@@ -31,9 +31,12 @@ class TransactionController extends Controller
             $query->whereDate('date', '<=', $request->end_date);
         }
 
-        $incomeTransactions = (clone $query)->where('type', 'income')->orderBy('date', 'desc')->paginate(10, ['*'], 'page_income');
-        $expenseTransactions = (clone $query)->where('type', 'expense')->where('is_tanggungan_pemilik', false)->orderBy('date', 'desc')->paginate(10, ['*'], 'page_expense');
-        $ownerTransactions = (clone $query)->where('type', 'expense')->where('is_tanggungan_pemilik', true)->orderBy('date', 'desc')->paginate(10, ['*'], 'page_owner');
+        $perPage = (int) $request->input('per_page', 10);
+        $perPage = in_array($perPage, [10, 25, 50, 100]) ? $perPage : 10;
+
+        $incomeTransactions = (clone $query)->where('type', 'income')->orderBy('date', 'desc')->paginate($perPage, ['*'], 'page_income');
+        $expenseTransactions = (clone $query)->where('type', 'expense')->where('is_tanggungan_pemilik', false)->orderBy('date', 'desc')->paginate($perPage, ['*'], 'page_expense');
+        $ownerTransactions = (clone $query)->where('type', 'expense')->where('is_tanggungan_pemilik', true)->orderBy('date', 'desc')->paginate($perPage, ['*'], 'page_owner');
 
         $villas = auth()->user()->hasRole('pemilik')
             ? auth()->user()->villas

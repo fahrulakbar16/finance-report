@@ -643,12 +643,62 @@
     function toggleEditTanggungan(type) {
         document.getElementById('edit_tanggungan_pemilik_wrapper').style.display = type === 'expense' ? 'block' : 'none';
     }
+
+    // Function to handle per_page dropdown change
+    window.changePerPage = function(value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('per_page', value);
+        // Reset all paginations to page 1 when changing size
+        url.searchParams.delete('page_income');
+        url.searchParams.delete('page_expense');
+        url.searchParams.delete('page_owner');
+        window.location.href = url.toString();
+    }
 </script>
 
+<!-- Hidden template for per-page dropdown -->
+<div id="perPageSelectorTemplate" style="display: none;">
+    <div id="perPageSelectorEl" class="d-flex align-items-center gap-2 mb-2">
+        <label class="text-muted small fw-medium mb-0 text-nowrap">Tampilkan</label>
+        <select class="form-select form-select-sm border-light bg-light rounded-3 fw-medium" style="width: auto; font-size: 0.8rem; padding-top: 0.25rem; padding-bottom: 0.25rem;" onchange="changePerPage(this.value)">
+            @foreach([10, 25, 50, 100] as $size)
+                <option value="{{ $size }}" {{ request('per_page', 10) == $size ? 'selected' : '' }}>{{ $size }}</option>
+            @endforeach
+        </select>
+        <span class="text-muted small fw-medium text-nowrap">data</span>
+    </div>
+</div>
+
 <script>
-    // Tab persistence: update URL and pagination links when switching tabs
     document.addEventListener('DOMContentLoaded', function() {
         const tabButtons = document.querySelectorAll('#transactionIndexTabs button[data-tab-name]');
+        const selectorTemplate = document.getElementById('perPageSelectorEl');
+
+        function attachPerPageSelector() {
+            const activePane = document.querySelector('.tab-pane.active');
+            if (!activePane || !selectorTemplate) return;
+
+            // Find the pagination text container "Showing 1 to N..."
+            const paginationNav = activePane.querySelector('.pagination-fi nav .d-sm-flex > div:first-child');
+            if (paginationNav) {
+                // Remove flex-row classes if they exist, make it a column
+                paginationNav.classList.remove('align-items-center');
+                paginationNav.classList.add('d-flex', 'flex-column', 'align-items-start', 'justify-content-center');
+
+                const pTag = paginationNav.querySelector('p');
+
+                // Hide the "Showing 1 to N of M results" text
+                if (pTag) {
+                    pTag.style.display = 'none';
+                    paginationNav.insertBefore(selectorTemplate, pTag);
+                } else {
+                    paginationNav.appendChild(selectorTemplate);
+                }
+            }
+        }
+
+        // Attach on initial load
+        attachPerPageSelector();
 
         tabButtons.forEach(function(btn) {
             btn.addEventListener('shown.bs.tab', function() {
@@ -663,6 +713,9 @@
                     linkUrl.searchParams.set('tab', tabName);
                     link.href = linkUrl.toString();
                 });
+
+                // Re-attach selector to new active tab
+                attachPerPageSelector();
             });
         });
     });
