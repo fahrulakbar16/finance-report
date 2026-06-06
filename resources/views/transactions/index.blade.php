@@ -153,13 +153,13 @@
             </div>
             <ul class="nav nav-tabs nav-tabs-fi border-0 gap-3" id="transactionIndexTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active border-0 fw-semibold px-0 text-muted transition-all" id="index-income-tab" data-bs-toggle="tab" data-bs-target="#index-income-pane" type="button" role="tab" style="font-size: 0.9rem;">Pemasukan</button>
+                    <button class="nav-link {{ request('tab', 'income') === 'income' ? 'active' : '' }} border-0 fw-semibold px-0 text-muted transition-all" id="index-income-tab" data-bs-toggle="tab" data-bs-target="#index-income-pane" data-tab-name="income" type="button" role="tab" style="font-size: 0.9rem;">Pemasukan</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link border-0 fw-semibold px-0 text-muted transition-all" id="index-expense-tab" data-bs-toggle="tab" data-bs-target="#index-expense-pane" type="button" role="tab" style="font-size: 0.9rem;">Pengeluaran</button>
+                    <button class="nav-link {{ request('tab') === 'expense' ? 'active' : '' }} border-0 fw-semibold px-0 text-muted transition-all" id="index-expense-tab" data-bs-toggle="tab" data-bs-target="#index-expense-pane" data-tab-name="expense" type="button" role="tab" style="font-size: 0.9rem;">Pengeluaran</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link border-0 fw-semibold px-0 text-muted transition-all" id="index-owner-tab" data-bs-toggle="tab" data-bs-target="#index-owner-pane" type="button" role="tab" style="font-size: 0.9rem;">Tanggungan Pemilik</button>
+                    <button class="nav-link {{ request('tab') === 'owner' ? 'active' : '' }} border-0 fw-semibold px-0 text-muted transition-all" id="index-owner-tab" data-bs-toggle="tab" data-bs-target="#index-owner-pane" data-tab-name="owner" type="button" role="tab" style="font-size: 0.9rem;">Tanggungan Pemilik</button>
                 </li>
             </ul>
         </div>
@@ -167,7 +167,7 @@
         <div class="card-body p-0">
             <div class="tab-content" id="transactionIndexTabsContent">
                 <!-- Income Pane -->
-                <div class="tab-pane fade show active" id="index-income-pane" role="tabpanel" tabindex="0">
+                <div class="tab-pane fade {{ request('tab', 'income') === 'income' ? 'show active' : '' }}" id="index-income-pane" role="tabpanel" tabindex="0">
                     <div class="table-responsive">
                         <table class="table table-fi mb-0 align-middle">
                             <thead>
@@ -249,7 +249,7 @@
                 </div>
 
                 <!-- Expense Pane -->
-                <div class="tab-pane fade" id="index-expense-pane" role="tabpanel" tabindex="0">
+                <div class="tab-pane fade {{ request('tab') === 'expense' ? 'show active' : '' }}" id="index-expense-pane" role="tabpanel" tabindex="0">
                     <div class="table-responsive">
                         <table class="table table-custom mb-0 align-middle">
                             <thead>
@@ -331,7 +331,7 @@
                 </div>
 
                 <!-- Owner Expense Pane -->
-                <div class="tab-pane fade" id="index-owner-pane" role="tabpanel" tabindex="0">
+                <div class="tab-pane fade {{ request('tab') === 'owner' ? 'show active' : '' }}" id="index-owner-pane" role="tabpanel" tabindex="0">
                     <div class="table-responsive">
                         <table class="table table-custom mb-0 align-middle">
                             <thead>
@@ -643,5 +643,28 @@
     function toggleEditTanggungan(type) {
         document.getElementById('edit_tanggungan_pemilik_wrapper').style.display = type === 'expense' ? 'block' : 'none';
     }
+</script>
+
+<script>
+    // Tab persistence: update URL and pagination links when switching tabs
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('#transactionIndexTabs button[data-tab-name]');
+
+        tabButtons.forEach(function(btn) {
+            btn.addEventListener('shown.bs.tab', function() {
+                const tabName = this.getAttribute('data-tab-name');
+                const url = new URL(window.location.href);
+                url.searchParams.set('tab', tabName);
+                history.replaceState(null, '', url.toString());
+
+                // Update all pagination links to include the tab parameter
+                document.querySelectorAll('.pagination a').forEach(function(link) {
+                    const linkUrl = new URL(link.href);
+                    linkUrl.searchParams.set('tab', tabName);
+                    link.href = linkUrl.toString();
+                });
+            });
+        });
+    });
 </script>
 @endpush
