@@ -6,7 +6,7 @@
 <!-- Stats Widgets -->
 <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
     <div class="col">
-        <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
+    <div class="card card-fi card-hover h-100">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Pemasukan (Bulan Ini)</h6>
@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
+    <div class="card card-fi card-hover h-100">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Pengeluaran (Bulan Ini)</h6>
@@ -32,7 +32,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
+    <div class="card card-fi card-hover h-100">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Bagian Pengelola</h6>
@@ -45,7 +45,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
+    <div class="card card-fi card-hover h-100">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Bagian Pemilik</h6>
@@ -62,7 +62,7 @@
 <div class="row g-4 mb-4">
     <!-- Cash Flow Chart -->
     <div class="col-lg-8">
-        <div class="card border-0 shadow-sm h-100" style="border-radius: var(--fi-radius);">
+        <div class="card card-fi h-100">
             <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
                 <h5 class="fw-bold text-dark mb-0">Tren Arus Kas (6 Bulan Terakhir)</h5>
                 <p class="text-muted small">Perbandingan pemasukan vs pengeluaran villa</p>
@@ -75,7 +75,7 @@
 
     <!-- AI Insight Widget -->
     <div class="col-lg-4">
-        <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: var(--fi-radius);">
+        <div class="card card-fi h-100 overflow-hidden">
             <div class="card-header bg-warning bg-opacity-10 border-0 pt-4 px-4">
                 <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
                     <i class="bi bi-lightning-charge-fill text-warning me-2"></i> Insight AI
@@ -101,13 +101,13 @@
 <div class="row g-4">
     <!-- Recent Transactions -->
     <div class="col-md-7">
-        <div class="card border-0 shadow-sm h-100" style="border-radius: var(--fi-radius);">
+        <div class="card card-fi h-100">
             <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold text-dark mb-0">Riwayat Transaksi</h5>
                     <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-light text-primary fw-medium px-3">Semua <i class="bi bi-arrow-right small ms-1"></i></a>
                 </div>
-                <ul class="nav nav-tabs border-0 gap-3" id="transactionTabs" role="tablist">
+                <ul class="nav nav-tabs nav-tabs-fi border-0 gap-3" id="transactionTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active border-0 fw-semibold px-0 text-muted transition-all" id="income-tab" data-bs-toggle="tab" data-bs-target="#income-pane" type="button" role="tab" style="font-size: 0.85rem;">Pemasukan</button>
                     </li>
@@ -124,7 +124,7 @@
                     <!-- Income Pane -->
                     <div class="tab-pane fade show active" id="income-pane" role="tabpanel" tabindex="0">
                         <div class="table-responsive">
-                            <table class="table table-custom mb-0 align-middle">
+                            <table class="table table-fi mb-0 align-middle">
                                 <tbody>
                                     @forelse($recentIncome as $tx)
                                         <tr>
@@ -148,7 +148,7 @@
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr><td class="text-center py-5 text-muted small">Belum ada pemasukan</td></tr>
+                                        <tr><td class="empty-state"><i class="bi bi-inbox d-block"></i>Belum ada pemasukan</td></tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -182,7 +182,7 @@
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr><td class="text-center py-5 text-muted small">Belum ada pengeluaran</td></tr>
+                                        <tr><td class="empty-state"><i class="bi bi-inbox d-block"></i>Belum ada pengeluaran</td></tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -216,7 +216,7 @@
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr><td class="text-center py-5 text-muted small">Belum ada tanggungan pemilik</td></tr>
+                                        <tr><td class="empty-state"><i class="bi bi-inbox d-block"></i>Belum ada tanggungan pemilik</td></tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -229,7 +229,7 @@
 
     <!-- Active Recurring -->
     <div class="col-md-5">
-        <div class="card border-0 shadow-sm h-100" style="border-radius: var(--fi-radius);">
+        <div class="card card-fi h-100">
             <div class="card-header bg-transparent border-0 pt-4 px-4 pb-0">
                 <h5 class="fw-bold text-dark mb-0">Pengeluaran Rutin (Recurring)</h5>
                 <p class="text-muted small">Biaya yang terpotong otomatis tiap periode</p>
@@ -310,35 +310,4 @@
 </script>
 @endpush
 
-<style>
-    .transition-all { transition: all 0.3s ease; }
-    .hover-shadow-sm:hover { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .leading-relaxed { line-height: 1.625; }
-    .nav-tabs .nav-link.active {
-        color: var(--bs-primary) !important;
-        border-bottom: 2px solid var(--bs-primary) !important;
-        background: transparent;
-    }
-    .nav-tabs .nav-link:hover {
-        color: var(--bs-primary) !important;
-    }
-    .table-custom tbody tr {
-        transition: all 0.2s ease;
-        border-bottom: 1px solid #f1f5f9;
-    }
-    .table-custom tbody tr:last-child {
-        border-bottom: none;
-    }
-    .table-custom tbody tr:hover {
-        background-color: #f8fafc;
-        transform: scale(1.002);
-    }
-    .amount-badge {
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 0.85rem;
-        display: inline-block;
-    }
-</style>
 @endsection

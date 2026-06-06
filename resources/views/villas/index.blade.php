@@ -3,37 +3,44 @@
 @section('page_title', 'Manajemen Villa')
 
 @section('content')
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert" style="border-radius: var(--fi-radius);">
-        <div class="d-flex align-items-center">
-            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
-            <div>{{ session('success') }}</div>
+<div class="container-fluid px-0">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div class="page-header-fi">
+            <h4>Manajemen Villa</h4>
+            <p>Kelola data villa beserta persentase bagi hasil</p>
         </div>
-        <button type="button" class="btn-close mt-1" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm rounded-3 px-3 py-2" data-bs-toggle="modal" data-bs-target="#createVillaModal">
+            <i class="bi bi-plus-lg fs-5"></i>
+            <span class="fw-medium">Tambah Villa</span>
+        </button>
+    </div>
+
+@if(session('success'))
+    <div class="alert alert-success alert-fi alert-dismissible fade show d-flex align-items-center" role="alert">
+        <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+        <div>{{ session('success') }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
 
 @if($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert" style="border-radius: var(--fi-radius);">
-        <div class="d-flex align-items-center">
-            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
-            <div>Terdapat kesalahan input form. Silakan periksa kembali isian Anda.</div>
-        </div>
-        <button type="button" class="btn-close mt-1" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="alert alert-danger alert-fi alert-dismissible fade show d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+        <div>Terdapat kesalahan input form. Silakan periksa kembali isian Anda.</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
 
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center border-0 pt-4 pb-3 px-4">
-        <span class="fs-5 fw-bold text-dark">Daftar Villa</span>
-        <button type="button" class="btn btn-sm btn-primary py-2 px-3" data-bs-toggle="modal" data-bs-target="#createVillaModal">
-            <i class="bi bi-plus-lg me-1"></i> Tambah Villa
-        </button>
+<div class="card card-fi overflow-hidden">
+    <div class="card-header d-flex justify-content-between align-items-center pt-4 pb-3 px-4">
+        <h5 class="fw-bold text-dark mb-0">Daftar Villa</h5>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover mb-0 align-middle">
-            <thead class="bg-light">
+        <table class="table table-fi mb-0 align-middle">
+            <thead>
                 <tr>
                     <th class="ps-4 py-3">Nama Villa</th>
                     <th class="py-3">Email Kontak</th>
@@ -78,7 +85,10 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center py-5 text-muted">Belum ada data villa.</td>
+                        <td colspan="4" class="empty-state">
+                            <i class="bi bi-inbox d-block"></i>
+                            Belum ada data villa.
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
@@ -86,7 +96,7 @@
     </div>
 
     @if($villas->hasPages())
-    <div class="card-footer bg-white border-top py-3 px-4">
+    <div class="pagination-fi">
         {{ $villas->links() }}
     </div>
     @endif
@@ -95,7 +105,7 @@
 <!-- Modal Create Villa -->
 <div class="modal fade" id="createVillaModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow" style="border-radius: var(--fi-radius);">
+    <div class="modal-content border-0 shadow-lg rounded-4">
       <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
         <h5 class="modal-title fw-bold">Tambah Villa Baru</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -174,7 +184,7 @@
 @foreach($villas as $villa)
 <div class="modal fade" id="editVillaModal{{ $villa->id }}" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow" style="border-radius: var(--fi-radius);">
+    <div class="modal-content border-0 shadow-lg rounded-4">
       <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
         <h5 class="modal-title fw-bold">Edit Villa: {{ $villa->name }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -298,4 +308,6 @@
         });
     });
 </script>
+
+</div>
 @endsection

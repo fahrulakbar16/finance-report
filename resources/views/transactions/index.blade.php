@@ -3,58 +3,13 @@
 @section('page_title', 'Laporan Transaksi')
 
 @section('content')
-<style>
-    .card-hover {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card-hover:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.1) !important;
-    }
-    .fs-7 {
-        font-size: 0.85rem;
-    }
-    .table-custom thead th {
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.5px;
-        color: #64748b;
-        background-color: #f8fafc;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    .table-custom tbody tr {
-        transition: all 0.2s ease;
-        border-bottom: 1px solid #f1f5f9;
-    }
-    .table-custom tbody tr:hover {
-        background-color: #f8fafc;
-        transform: scale(1.001);
-    }
-    .amount-badge {
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 0.9rem;
-        display: inline-block;
-    }
-    .nav-tabs .nav-link.active {
-        color: var(--bs-primary) !important;
-        border-bottom: 2px solid var(--bs-primary) !important;
-        background: transparent;
-    }
-    .nav-tabs .nav-link:hover {
-        color: var(--bs-primary) !important;
-    }
-</style>
-
 <div class="container-fluid px-0">
 
     <!-- Header Actions -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-        <div>
-            <h4 class="mb-0 fw-bold text-dark">Manajemen Transaksi</h4>
-            <p class="text-muted mb-0 small">Kelola dan pantau semua transaksi masuk dan keluar</p>
+        <div class="page-header-fi">
+            <h4>Manajemen Transaksi</h4>
+            <p>Kelola dan pantau semua transaksi masuk dan keluar</p>
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('export.excel.all', request()->query()) }}" class="btn btn-success d-flex align-items-center gap-2 shadow-sm rounded-3 px-3 py-2">
@@ -75,7 +30,7 @@
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4 rounded-3 d-flex align-items-center" role="alert">
+        <div class="alert alert-success alert-fi alert-dismissible fade show d-flex align-items-center" role="alert">
             <i class="bi bi-check-circle-fill fs-4 me-3"></i>
             <div>{{ session('success') }}</div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -85,7 +40,7 @@
     <!-- Summary Widgets -->
     <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
         <div class="col">
-            <div class="card card-hover h-100 border-0 shadow-sm rounded-4">
+            <div class="card card-fi card-hover h-100">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <div>
@@ -147,7 +102,7 @@
     </div>
 
     <!-- Filter Bar -->
-    <div class="card border-0 shadow-sm mb-4 rounded-4">
+    <div class="card card-fi mb-4">
         <div class="card-body p-4">
             <form action="{{ route('transactions.index') }}" method="GET" class="row g-3 align-items-center">
                 @unlessrole('pemilik')
@@ -191,12 +146,12 @@
     </div>
 
     <!-- Transactions List -->
-    <div class="card mt-4 border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+    <div class="card card-fi mt-4 overflow-hidden">
+        <div class="card-header pt-4 px-4 pb-0">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="fw-bold text-dark mb-0">Riwayat Transaksi</h5>
             </div>
-            <ul class="nav nav-tabs border-0 gap-3" id="transactionIndexTabs" role="tablist">
+            <ul class="nav nav-tabs nav-tabs-fi border-0 gap-3" id="transactionIndexTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active border-0 fw-semibold px-0 text-muted transition-all" id="index-income-tab" data-bs-toggle="tab" data-bs-target="#index-income-pane" type="button" role="tab" style="font-size: 0.9rem;">Pemasukan</button>
                 </li>
@@ -214,7 +169,7 @@
                 <!-- Income Pane -->
                 <div class="tab-pane fade show active" id="index-income-pane" role="tabpanel" tabindex="0">
                     <div class="table-responsive">
-                        <table class="table table-custom mb-0 align-middle">
+                        <table class="table table-fi mb-0 align-middle">
                             <thead>
                                 <tr>
                                     <th class="ps-4 py-3">Detail Transaksi</th>
@@ -281,13 +236,13 @@
                                         @endrole
                                     </tr>
                                 @empty
-                                    <tr><td colspan="{{ auth()->user()->hasRole('pengelola') ? '5' : '4' }}" class="text-center py-5 text-muted">Belum ada pemasukan.</td></tr>
+                                    <tr><td colspan="{{ auth()->user()->hasRole('pengelola') ? '5' : '4' }}" class="empty-state"><i class="bi bi-inbox d-block"></i>Belum ada pemasukan.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                     @if($incomeTransactions->hasPages())
-                        <div class="px-4 py-3 border-top bg-light bg-opacity-50">
+                        <div class="pagination-fi">
                             {{ $incomeTransactions->withQueryString()->links() }}
                         </div>
                     @endif
@@ -363,13 +318,13 @@
                                         @endrole
                                     </tr>
                                 @empty
-                                    <tr><td colspan="{{ auth()->user()->hasRole('pengelola') ? '5' : '4' }}" class="text-center py-5 text-muted">Belum ada pengeluaran.</td></tr>
+                                    <tr><td colspan="{{ auth()->user()->hasRole('pengelola') ? '5' : '4' }}" class="empty-state"><i class="bi bi-inbox d-block"></i>Belum ada pengeluaran.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                     @if($expenseTransactions->hasPages())
-                        <div class="px-4 py-3 border-top bg-light bg-opacity-50">
+                        <div class="pagination-fi">
                             {{ $expenseTransactions->withQueryString()->links() }}
                         </div>
                     @endif
@@ -445,13 +400,13 @@
                                         @endrole
                                     </tr>
                                 @empty
-                                    <tr><td colspan="{{ auth()->user()->hasRole('pengelola') ? '5' : '4' }}" class="text-center py-5 text-muted">Belum ada tanggungan pemilik.</td></tr>
+                                    <tr><td colspan="{{ auth()->user()->hasRole('pengelola') ? '5' : '4' }}" class="empty-state"><i class="bi bi-inbox d-block"></i>Belum ada tanggungan pemilik.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                     @if($ownerTransactions->hasPages())
-                        <div class="px-4 py-3 border-top bg-light bg-opacity-50">
+                        <div class="pagination-fi">
                             {{ $ownerTransactions->withQueryString()->links() }}
                         </div>
                     @endif

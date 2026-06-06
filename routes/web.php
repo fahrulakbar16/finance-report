@@ -21,6 +21,9 @@ Route::middleware(['auth', 'role:pemilik|pengelola'])->group(function () {
     Route::put('/transactions/{transaction}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
 
+    Route::get('/recurring-transactions', [App\Http\Controllers\RecurringTransactionController::class, 'index'])->name('recurring-transactions.index');
+    Route::delete('/recurring-transactions/{recurringTransaction}', [App\Http\Controllers\RecurringTransactionController::class, 'destroy'])->name('recurring-transactions.destroy');
+
     // M6 Export Routes
     Route::get('/export/transactions/excel', [App\Http\Controllers\ExportController::class, 'exportAllExcel'])->name('export.excel.all');
     Route::get('/export/transactions/pdf', [App\Http\Controllers\ExportController::class, 'exportAllPdf'])->name('export.pdf.all');

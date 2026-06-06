@@ -10,7 +10,7 @@
 </div>
 
 <!-- Header Card -->
-<div class="card border-0 shadow-sm mb-4" style="border-radius: var(--fi-radius);">
+<div class="card card-fi mb-4">
     <div class="card-body p-4">
         <div class="row align-items-center">
             <div class="col-md-auto">
@@ -37,7 +37,7 @@
 </div>
 
 <!-- Filter Bar -->
-<div class="card border-0 shadow-sm mb-4" style="border-radius: var(--fi-radius);">
+<div class="card card-fi mb-4">
     <div class="card-body p-4">
         <form action="{{ route('villas.show', $villa) }}" method="GET" class="row g-3 align-items-end">
             <div class="col-md-4">
@@ -63,7 +63,7 @@
 <!-- Summary Widgets -->
 <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
     <div class="col">
-        <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
+        <div class="card card-fi card-hover h-100">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Pemasukan Villa</h6>
@@ -76,7 +76,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
+        <div class="card card-fi card-hover h-100">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Pengeluaran Villa</h6>
@@ -89,7 +89,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card h-100 border-0 shadow-sm" style="border-radius: var(--fi-radius);">
+        <div class="card card-fi card-hover h-100">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h6 class="card-title text-muted fw-semibold mb-0" style="font-size: 0.875rem;">Profitability</h6>
@@ -104,18 +104,18 @@
 </div>
 
 <!-- Transactions Table -->
-<div class="card border-0 shadow-sm" style="border-radius: var(--fi-radius);">
-    <div class="card-header d-flex justify-content-between align-items-center border-0 pt-4 pb-3 px-4 bg-transparent">
-        <span class="fs-5 fw-bold text-dark">Riwayat Transaksi Villa</span>
+<div class="card card-fi overflow-hidden">
+    <div class="card-header d-flex justify-content-between align-items-center pt-4 pb-3 px-4">
+        <h5 class="fw-bold text-dark mb-0">Riwayat Transaksi Villa</h5>
     </div>
     <div class="table-responsive">
-        <table class="table table-hover mb-0 align-middle">
-            <thead class="bg-light">
+        <table class="table table-fi mb-0 align-middle">
+            <thead>
                 <tr>
-                    <th class="ps-4 py-3 text-muted fw-bold small text-uppercase" style="letter-spacing: 0.05em;">Tanggal</th>
-                    <th class="py-3 text-muted fw-bold small text-uppercase" style="letter-spacing: 0.05em;">Keterangan</th>
-                    <th class="py-3 text-muted fw-bold small text-uppercase" style="letter-spacing: 0.05em;">Tipe</th>
-                    <th class="text-end pe-4 py-3 text-muted fw-bold small text-uppercase" style="letter-spacing: 0.05em;">Jumlah</th>
+                    <th class="ps-4 py-3">Tanggal</th>
+                    <th class="py-3">Keterangan</th>
+                    <th class="py-3">Tipe</th>
+                    <th class="text-end pe-4 py-3">Jumlah</th>
                 </tr>
             </thead>
             <tbody>
@@ -125,23 +125,30 @@
                         <td class="fw-medium text-dark">{{ $transaction->name }}</td>
                         <td>
                             @if($transaction->type == 'income')
-                                <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 fw-medium" style="font-size: 0.75rem;">Income</span>
+                                <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 fw-medium" style="font-size: 0.75rem;">Pemasukan</span>
                             @else
-                                <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1 fw-medium" style="font-size: 0.75rem;">Expense</span>
+                                <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1 fw-medium" style="font-size: 0.75rem;">Pengeluaran</span>
                             @endif
                         </td>
-                        <td class="text-end pe-4 fw-bold text-dark">Rp {{ number_format($transaction->amount, 0, ',', '.') }}</td>
+                        <td class="text-end pe-4">
+                            <div class="amount-badge {{ $transaction->type == 'income' ? 'bg-success' : 'bg-danger' }} bg-opacity-10 text-dark">
+                                {{ $transaction->type == 'income' ? '+' : '-' }}Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                            </div>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center py-5 text-muted">Tidak ada transaksi ditemukan untuk kriteria ini.</td>
+                        <td colspan="4" class="empty-state">
+                            <i class="bi bi-inbox d-block"></i>
+                            Tidak ada transaksi ditemukan untuk kriteria ini.
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
     @if($transactions->hasPages())
-        <div class="card-footer bg-transparent border-top py-3 px-4">
+        <div class="pagination-fi">
             {{ $transactions->withQueryString()->links() }}
         </div>
     @endif

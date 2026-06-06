@@ -195,6 +195,115 @@
                 top: 64px;
             }
         }
+
+        /* ===== Shared Design System ===== */
+
+        /* Card consistency */
+        .card-fi {
+            background-color: var(--fi-bg-card);
+            border: none !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-fi .card-header {
+            background-color: transparent;
+            border: none;
+            padding: 1.25rem 1.5rem 0.75rem;
+        }
+
+        /* Card hover animation */
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.1) !important;
+        }
+
+        /* Table consistency */
+        .table-fi thead th {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem 1.5rem;
+        }
+        .table-fi tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .table-fi tbody tr:last-child {
+            border-bottom: none;
+        }
+        .table-fi tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Amount badge */
+        .amount-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        /* Tab styling */
+        .nav-tabs-fi .nav-link.active {
+            color: var(--fi-color-primary) !important;
+            border-bottom: 2px solid var(--fi-color-primary) !important;
+            background: transparent;
+        }
+        .nav-tabs-fi .nav-link:hover {
+            color: var(--fi-color-primary) !important;
+        }
+
+        /* Pagination wrapper */
+        .pagination-fi {
+            padding: 0.75rem 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            background-color: rgba(248, 250, 252, 0.5);
+        }
+
+        /* Alert consistency */
+        .alert-fi {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #94a3b8;
+        }
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        /* Transition utilities */
+        .transition-all { transition: all 0.3s ease; }
+        .hover-shadow-sm:hover { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+
+        /* Page header */
+        .page-header-fi h4 {
+            font-weight: 700;
+            color: var(--fi-text-primary);
+            margin-bottom: 0.125rem;
+        }
+        .page-header-fi p {
+            color: var(--fi-text-muted);
+            margin-bottom: 0;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <body>
@@ -248,6 +357,12 @@
               Laporan Transaksi
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('recurring-transactions.index') ? 'active' : '' }}" href="{{ route('recurring-transactions.index') }}">
+              <i class="bi bi-arrow-repeat"></i>
+              Pengeluaran Rutin
+            </a>
+          </li>
 
           @role('pengelola')
           <li class="nav-item mt-3">
@@ -283,9 +398,9 @@
     </nav>
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 mb-4">
+      {{-- <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 mb-4">
         <h1 class="page-title">@yield('page_title', 'Dashboard')</h1>
-      </div>
+      </div> --}}
 
       @yield('content')
     </main>
