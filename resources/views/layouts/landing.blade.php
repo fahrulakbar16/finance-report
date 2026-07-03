@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
+    @PwaHead
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="@yield('description', 'Athara Villas – Villa premium dengan fasilitas lengkap dan pemandangan indah.')">
     <title>@yield('title', 'Athara Villas') – Athara Villas</title>
@@ -360,5 +361,6 @@
 </script>
 
 @yield('scripts')
+@RegisterServiceWorkerScript
 </body>
 </html>
