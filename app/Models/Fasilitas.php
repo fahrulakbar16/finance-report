@@ -15,4 +15,9 @@ class Fasilitas extends Model
         'nama',
         'ikon',
     ];
+
+    public function villas()
+    {
+        return $this->belongsToMany(Villa::class, 'fasilitas_villa', 'fasilitas_id', 'villa_id');
+    }
 }

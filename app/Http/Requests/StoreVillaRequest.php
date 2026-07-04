@@ -17,9 +17,19 @@ class StoreVillaRequest extends FormRequest
             'pemilik_id' => ['required', 'exists:users,id'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'description' => ['nullable', 'string'],
+            'price' => ['required', 'integer', 'min:0'],
+            'address' => ['nullable', 'string'],
+            'latitude' => ['nullable', 'string'],
+            'longitude' => ['nullable', 'string'],
             'persenan_pengelola' => ['required', 'integer', 'min:0', 'max:100'],
             'persenan_pemilik' => ['required', 'integer', 'min:0', 'max:100'],
+            'rooms' => ['nullable', 'array'],
+            'rooms.*.name' => ['required_with:rooms', 'string', 'max:255'],
+            'rooms.*.amount' => ['required_with:rooms', 'integer', 'min:1'],
+            'fasilitas' => ['nullable', 'array'],
+            'fasilitas.*' => ['exists:fasilitas,id'],
         ];
     }
 

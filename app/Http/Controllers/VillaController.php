@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Villa;
 use App\Models\User;
+use App\Models\Fasilitas;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreVillaRequest;
 use App\Http\Requests\UpdateVillaRequest;
@@ -20,12 +21,27 @@ class VillaController extends Controller
         return view('villas.index', compact('villas', 'pemiliks'));
     }
 
+    public function create()
+    {
+        $pemiliks = User::role('pemilik')->get();
+        $fasilitas = Fasilitas::all();
+        return view('villas.create', compact('pemiliks', 'fasilitas'));
+    }
+
     public function store(StoreVillaRequest $request)
     {
         app(CreateVillaAction::class)->execute($request->validated());
 
         return redirect()->route('villas.index')
             ->with('success', 'Villa successfully created.');
+    }
+
+    public function edit(Villa $villa)
+    {
+        $villa->load(['rooms', 'fasilitas']);
+        $pemiliks = User::role('pemilik')->get();
+        $fasilitas = Fasilitas::all();
+        return view('villas.edit', compact('villa', 'pemiliks', 'fasilitas'));
     }
 
     public function update(UpdateVillaRequest $request, Villa $villa)

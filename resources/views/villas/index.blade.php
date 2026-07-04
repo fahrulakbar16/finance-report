@@ -11,10 +11,10 @@
             <h4>Manajemen Villa</h4>
             <p>Kelola data villa beserta persentase bagi hasil</p>
         </div>
-        <button type="button" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm rounded-3 px-3 py-2" data-bs-toggle="modal" data-bs-target="#createVillaModal">
+        <a href="{{ route('villas.create') }}" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm rounded-3 px-3 py-2">
             <i class="bi bi-plus-lg fs-5"></i>
             <span class="fw-medium">Tambah Villa</span>
-        </button>
+        </a>
     </div>
 
 @if(session('success'))
@@ -70,9 +70,9 @@
                                 <a href="{{ route('villas.show', $villa) }}" class="btn btn-sm btn-light border" title="Detail">
                                     <i class="bi bi-eye text-primary"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-light border" title="Edit" data-bs-toggle="modal" data-bs-target="#editVillaModal{{ $villa->id }}">
+                                <a href="{{ route('villas.edit', $villa) }}" class="btn btn-sm btn-light border" title="Edit">
                                     <i class="bi bi-pencil text-muted"></i>
-                                </button>
+                                </a>
                                 <form action="{{ route('villas.destroy', $villa) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus villa ini? Seluruh data transaksi juga akan terhapus.')">
                                     @csrf
                                     @method('DELETE')
@@ -101,213 +101,6 @@
     </div>
     @endif
 </div>
-
-<!-- Modal Create Villa -->
-<div class="modal fade" id="createVillaModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg rounded-4">
-      <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
-        <h5 class="modal-title fw-bold">Tambah Villa Baru</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form method="POST" action="{{ route('villas.store') }}">
-          <div class="modal-body px-4 pt-4 pb-2">
-              @csrf
-              <input type="hidden" name="form_type" value="create_villa">
-
-              <div class="mb-3">
-                  <label for="pemilik_id" class="form-label fw-medium text-dark small">Pilih Pemilik</label>
-                  <select class="form-select @error('pemilik_id') is-invalid @enderror" id="pemilik_id" name="pemilik_id" required>
-                      <option value="" selected disabled>Pilih User Pemilik</option>
-                      @foreach($pemiliks as $pemilik)
-                          <option value="{{ $pemilik->id }}" {{ (old('form_type') == 'create_villa' && old('pemilik_id') == $pemilik->id) ? 'selected' : '' }}>
-                              {{ $pemilik->name }} ({{ $pemilik->email }})
-                          </option>
-                      @endforeach
-                  </select>
-                  @if(old('form_type') == 'create_villa')
-                    @error('pemilik_id')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                  @endif
-              </div>
-
-              <div class="mb-3">
-                  <label for="name" class="form-label fw-medium text-dark small">Nama Villa</label>
-                  <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('form_type') == 'create_villa' ? old('name') : '' }}" required placeholder="Cth: Villa Sunset Paradise">
-                  @if(old('form_type') == 'create_villa')
-                    @error('name')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                  @endif
-              </div>
-
-              <div class="mb-3">
-                  <label for="email" class="form-label fw-medium text-dark small">Email Kontak</label>
-                  <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('form_type') == 'create_villa' ? old('email') : '' }}" required placeholder="Cth: info@villa.com">
-                  @if(old('form_type') == 'create_villa')
-                    @error('email')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                  @endif
-              </div>
-
-              <div class="mb-3">
-                  <label for="description" class="form-label fw-medium text-dark small">Deskripsi (Opsional)</label>
-                  <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="3" placeholder="Keterangan singkat tentang villa...">{{ old('form_type') == 'create_villa' ? old('description') : '' }}</textarea>
-                  @if(old('form_type') == 'create_villa')
-                    @error('description')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                  @endif
-              </div>
-
-              <div class="row mb-3">
-                  <div class="col-md-6">
-                      <label for="persenan_pengelola" class="form-label fw-medium text-dark small">Persentase Pengelola (%)</label>
-                      <input type="number" class="form-control @error('persenan_pengelola') is-invalid @enderror" id="persenan_pengelola" name="persenan_pengelola" value="{{ old('form_type') == 'create_villa' ? old('persenan_pengelola') : 0 }}" required min="0" max="100">
-                      @if(old('form_type') == 'create_villa')
-                        @error('persenan_pengelola')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                      @endif
-                  </div>
-                  <div class="col-md-6">
-                      <label for="persenan_pemilik" class="form-label fw-medium text-dark small">Persentase Pemilik (%)</label>
-                      <input type="number" class="form-control @error('persenan_pemilik') is-invalid @enderror" id="persenan_pemilik" name="persenan_pemilik" value="{{ old('form_type') == 'create_villa' ? old('persenan_pemilik') : 0 }}" required min="0" max="100" disabled>
-                      @if(old('form_type') == 'create_villa')
-                        @error('persenan_pemilik')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                      @endif
-                  </div>
-              </div>
-          </div>
-          <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
-            <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary px-4">Simpan Villa</button>
-          </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- Modals Edit Villa -->
-@foreach($villas as $villa)
-<div class="modal fade" id="editVillaModal{{ $villa->id }}" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg rounded-4">
-      <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
-        <h5 class="modal-title fw-bold">Edit Villa: {{ $villa->name }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form method="POST" action="{{ route('villas.update', $villa) }}">
-          <div class="modal-body px-4 pt-4 pb-2">
-              @csrf
-              @method('PUT')
-              <input type="hidden" name="form_type" value="edit_villa_{{ $villa->id }}">
-
-              <div class="mb-3">
-                  <label class="form-label fw-medium text-dark small">Pilih Pemilik</label>
-                  <select class="form-select @error('pemilik_id') is-invalid @enderror" name="pemilik_id" required>
-                      @foreach($pemiliks as $pemilik)
-                          <option value="{{ $pemilik->id }}" {{ (old('form_type') == 'edit_villa_'.$villa->id ? old('pemilik_id') : $villa->pemilik_id) == $pemilik->id ? 'selected' : '' }}>
-                              {{ $pemilik->name }}
-                          </option>
-                      @endforeach
-                  </select>
-                  @if(old('form_type') == 'edit_villa_'.$villa->id)
-                    @error('pemilik_id')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                  @endif
-              </div>
-
-              <div class="mb-3">
-                  <label class="form-label fw-medium text-dark small">Nama Villa</label>
-                  <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('form_type') == 'edit_villa_'.$villa->id ? old('name') : $villa->name }}" required>
-                  @if(old('form_type') == 'edit_villa_'.$villa->id)
-                    @error('name')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                  @endif
-              </div>
-
-              <div class="mb-3">
-                  <label class="form-label fw-medium text-dark small">Email Kontak</label>
-                  <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('form_type') == 'edit_villa_'.$villa->id ? old('email') : $villa->email }}" required>
-                  @if(old('form_type') == 'edit_villa_'.$villa->id)
-                    @error('email')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                  @endif
-              </div>
-
-              <div class="mb-3">
-                  <label class="form-label fw-medium text-dark small">Deskripsi (Opsional)</label>
-                  <textarea class="form-control @error('description') is-invalid @enderror" name="description" rows="3">{{ old('form_type') == 'edit_villa_'.$villa->id ? old('description') : $villa->description }}</textarea>
-                  @if(old('form_type') == 'edit_villa_'.$villa->id)
-                    @error('description')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                  @endif
-              </div>
-
-              <div class="row mb-3">
-                  <div class="col-md-6">
-                      <label class="form-label fw-medium text-dark small">Persentase Pengelola (%)</label>
-                      <input type="number" class="form-control @error('persenan_pengelola') is-invalid @enderror" name="persenan_pengelola" value="{{ old('form_type') == 'edit_villa_'.$villa->id ? old('persenan_pengelola') : $villa->persenan_pengelola }}" required min="0" max="100">
-                      @if(old('form_type') == 'edit_villa_'.$villa->id)
-                        @error('persenan_pengelola')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                      @endif
-                  </div>
-                  <div class="col-md-6">
-                      <label class="form-label fw-medium text-dark small">Persentase Pemilik (%)</label>
-                      <input type="number" class="form-control @error('persenan_pemilik') is-invalid @enderror" name="persenan_pemilik" value="{{ old('form_type') == 'edit_villa_'.$villa->id ? old('persenan_pemilik') : $villa->persenan_pemilik }}" required min="0" max="100" disabled>
-                      @if(old('form_type') == 'edit_villa_'.$villa->id)
-                        @error('persenan_pemilik')<span class="invalid-feedback"><strong>{{ $message }}</strong></span>@enderror
-                      @endif
-                  </div>
-              </div>
-          </div>
-          <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
-            <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary px-4">Update Villa</button>
-          </div>
-      </form>
-    </div>
-  </div>
-</div>
-@endforeach
-
-@if($errors->any())
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var formType = "{{ old('form_type') }}";
-        if(formType === 'create_villa') {
-            var myModal = new bootstrap.Modal(document.getElementById('createVillaModal'));
-            myModal.show();
-        } else if(formType && formType.startsWith('edit_villa_')) {
-            var villaId = formType.split('edit_villa_')[1];
-            var myModal = new bootstrap.Modal(document.getElementById('editVillaModal' + villaId));
-            myModal.show();
-    });
-</script>
-@endif
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Logic Persentase Pengelola & Pemilik
-        function setupPersentaseLogic(inputPengelola, inputPemilik) {
-            if (!inputPengelola || !inputPemilik) return;
-
-            inputPengelola.addEventListener('input', function() {
-                let valA = parseInt(this.value) || 0;
-                if (valA > 100) { valA = 100; this.value = 100; }
-                inputPemilik.value = 100 - valA;
-            });
-
-            // Sinkronisasi nilai pemilik saat inisialisasi
-            let initialVal = parseInt(inputPengelola.value) || 0;
-            inputPemilik.value = 100 - initialVal;
-        }
-
-        // Setup modal create
-        setupPersentaseLogic(
-            document.getElementById('persenan_pengelola'),
-            document.getElementById('persenan_pemilik')
-        );
-
-        // Setup modal edit (loop over forms)
-        document.querySelectorAll('form').forEach(form => {
-            let inputPengelola = form.querySelector('input[name="persenan_pengelola"]');
-            let inputPemilik = form.querySelector('input[name="persenan_pemilik"]');
-            if (inputPengelola && inputPemilik && inputPengelola.id !== 'persenan_pengelola') {
-                setupPersentaseLogic(inputPengelola, inputPemilik);
-            }
-        });
-    });
-</script>
 
 </div>
 @endsection

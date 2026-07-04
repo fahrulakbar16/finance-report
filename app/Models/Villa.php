@@ -17,6 +17,10 @@ class Villa extends Model
         'email',
         'image',
         'description',
+        'price',
+        'address',
+        'latitude',
+        'longitude',
         'persenan_pengelola',
         'persenan_pemilik',
     ];
@@ -34,5 +38,15 @@ class Villa extends Model
     public function recurringTransactions(): HasMany
     {
         return $this->hasMany(RecurringTransaction::class);
+    }
+
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(VillaRoom::class);
+    }
+
+    public function fasilitas()
+    {
+        return $this->belongsToMany(Fasilitas::class, 'fasilitas_villa', 'villa_id', 'fasilitas_id');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Actions\Villa;
 
 use App\Models\Villa;
+use Illuminate\Support\Facades\Storage;
 
 class UpdateVillaAction
 {
@@ -15,14 +16,47 @@ class UpdateVillaAction
      */
     public function execute(Villa $villa, array $data): Villa
     {
-        $villa->update([
+        $updateData = [
             'pemilik_id' => $data['pemilik_id'],
             'name' => $data['name'],
             'email' => $data['email'],
             'description' => $data['description'] ?? null,
+            'price' => $data['price'],
+            'address' => $data['address'] ?? null,
+            'latitude' => $data['latitude'] ?? null,
+            'longitude' => $data['longitude'] ?? null,
             'persenan_pengelola' => $data['persenan_pengelola'],
             'persenan_pemilik' => $data['persenan_pemilik'],
-        ]);
+        ];
+
+        if (isset($data['image']) && $data['image'] instanceof \Illuminate\Http\UploadedFile) {
+            if ($villa->image) {
+                Storage::disk('public')->delete($villa->image);
+            }
+            $updateData['image'] = $data['image']->store('villas', 'public');
+        }
+
+        $villa->update($updateData);
+
+        // Update Rooms (recreate)
+        $villa->rooms()->delete();
+        if (isset($data['rooms']) && is_array($data['rooms'])) {
+            foreach ($data['rooms'] as $room) {
+                if (!empty($room['name']) && !empty($room['amount'])) {
+                    $villa->rooms()->create([
+                        'name' => $room['name'],
+                        'amount' => $room['amount'],
+                    ]);
+                }
+            }
+        }
+
+        // Sync Fasilitas
+        if (isset($data['fasilitas']) && is_array($data['fasilitas'])) {
+            $villa->fasilitas()->sync($data['fasilitas']);
+        } else {
+            $villa->fasilitas()->sync([]);
+        }
 
         return $villa;
     }
