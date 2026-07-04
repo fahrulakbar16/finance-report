@@ -49,6 +49,15 @@ class CreateVillaAction
             $villa->fasilitas()->sync($data['fasilitas']);
         }
 
+        if (isset($data['gallery']) && is_array($data['gallery'])) {
+            foreach ($data['gallery'] as $image) {
+                if ($image instanceof \Illuminate\Http\UploadedFile) {
+                    $path = $image->store('villas/gallery', 'public');
+                    $villa->galleries()->create(['image' => $path]);
+                }
+            }
+        }
+
         return $villa;
     }
 }

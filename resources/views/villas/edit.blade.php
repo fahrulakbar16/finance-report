@@ -40,9 +40,10 @@
                         <div class="progress-bar bg-primary" id="stepperProgress" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <button type="button" class="position-absolute top-0 start-0 translate-middle btn btn-sm btn-primary rounded-pill step-indicator" style="width: 2rem; height:2rem;" data-step="1">1</button>
-                    <button type="button" class="position-absolute top-0 start-33 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 33.33% !important;" data-step="2">2</button>
-                    <button type="button" class="position-absolute top-0 start-66 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 66.66% !important;" data-step="3">3</button>
-                    <button type="button" class="position-absolute top-0 start-100 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem;" data-step="4">4</button>
+                    <button type="button" class="position-absolute top-0 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 25% !important;" data-step="2">2</button>
+                    <button type="button" class="position-absolute top-0 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 50% !important;" data-step="3">3</button>
+                    <button type="button" class="position-absolute top-0 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 75% !important;" data-step="4">4</button>
+                    <button type="button" class="position-absolute top-0 start-100 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem;" data-step="5">5</button>
                 </div>
             </div>
 
@@ -224,13 +225,52 @@
 
                     <div class="d-flex justify-content-between mt-5">
                         <button type="button" class="btn btn-light border px-4 py-2" onclick="prevStep(3)"><i class="bi bi-arrow-left me-2"></i> Sebelumnya</button>
+                        <button type="button" class="btn btn-primary px-4 py-2 fw-bold" onclick="nextStep(3)">Selanjutnya <i class="bi bi-arrow-right ms-2"></i></button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Galeri Kamar -->
+                <div class="form-step d-none" id="step4">
+                    <h5 class="mb-4 fw-bold">4. Galeri Kamar</h5>
+                    <p class="text-muted mb-4">Unggah foto baru atau hapus foto yang sudah ada dari galeri villa. Format yang diterima: JPG, PNG, GIF (maks. 2MB per foto).</p>
+
+                    @if($villa->galleries && $villa->galleries->count() > 0)
+                    <div class="mb-4">
+                        <h6 class="fw-medium text-dark mb-3">Foto Galeri Saat Ini</h6>
+                        <div class="row g-3" id="existingGalleryContainer">
+                            @foreach($villa->galleries as $gallery)
+                            <div class="col-6 col-md-3" id="gallery-item-{{ $gallery->id }}">
+                                <div class="position-relative">
+                                    <img src="{{ Storage::url($gallery->image) }}" class="img-fluid rounded-3 border" style="height: 140px; object-fit: cover; width: 100%;" alt="Foto galeri">
+                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle delete-gallery-btn" style="width: 1.5rem; height: 1.5rem; padding: 0; line-height: 1;" data-id="{{ $gallery->id }}" title="Hapus foto ini">
+                                        <i class="bi bi-x" style="font-size: 0.8rem;"></i>
+                                    </button>
+                                    <input type="hidden" class="deleted-gallery-input" name="deleted_galleries[]" value="{{ $gallery->id }}" disabled>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <div class="mb-4">
+                        <label class="form-label fw-medium text-dark" for="gallery">Tambah Foto Baru</label>
+                        <input type="file" class="form-control form-control-fi @error('gallery.*') is-invalid @enderror" id="gallery" name="gallery[]" multiple accept="image/jpeg,image/png,image/gif">
+                        @error('gallery.*')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Anda bisa memilih lebih dari satu foto sekaligus.</small>
+                    </div>
+
+                    <div id="galleryPreviewContainer" class="row g-3 mt-2"></div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <button type="button" class="btn btn-light border px-4 py-2" onclick="prevStep(4)"><i class="bi bi-arrow-left me-2"></i> Sebelumnya</button>
                         <button type="button" class="btn btn-primary px-4 py-2 fw-bold" onclick="showPreview()">Selanjutnya <i class="bi bi-arrow-right ms-2"></i></button>
                     </div>
                 </div>
-                
-                <!-- Step 4: Preview -->
-                <div class="form-step d-none" id="step4">
-                    <h5 class="mb-4 fw-bold">4. Konfirmasi Update Villa</h5>
+
+                <!-- Step 5: Preview -->
+                <div class="form-step d-none" id="step5">
+                    <h5 class="mb-4 fw-bold">5. Konfirmasi Update Villa</h5>
                     <div class="alert alert-info">
                         Silakan periksa kembali data yang telah Anda ubah. Klik "Update Data" jika sudah benar.
                     </div>
@@ -244,12 +284,13 @@
                                 <tr><th class="ps-3 py-3">Alamat</th><td id="prevAddress" class="py-3"></td></tr>
                                 <tr><th class="ps-3 py-3">Jumlah Kamar</th><td id="prevRooms" class="py-3"></td></tr>
                                 <tr><th class="ps-3 py-3">Fasilitas</th><td id="prevFasilitas" class="py-3"></td></tr>
+                                <tr><th class="ps-3 py-3">Galeri (Baru)</th><td id="prevGallery" class="py-3"></td></tr>
                             </tbody>
                         </table>
                     </div>
                     
                     <div class="d-flex justify-content-between mt-5">
-                        <button type="button" class="btn btn-light border px-4 py-2" onclick="prevStep(4)"><i class="bi bi-arrow-left me-2"></i> Sebelumnya</button>
+                        <button type="button" class="btn btn-light border px-4 py-2" onclick="prevStep(5)"><i class="bi bi-arrow-left me-2"></i> Sebelumnya</button>
                         <button type="submit" class="btn btn-success px-5 py-2 fw-bold">Update Data <i class="bi bi-check-lg ms-2"></i></button>
                     </div>
                 </div>
@@ -298,6 +339,46 @@
                 e.target.closest('.room-row').remove();
             }
         });
+
+        // --- Gallery: Delete existing image logic ---
+        document.querySelectorAll('.delete-gallery-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const item = document.getElementById('gallery-item-' + id);
+                if(item) {
+                    item.style.opacity = '0.4';
+                    item.querySelector('.deleted-gallery-input').disabled = false;
+                    this.innerHTML = '<i class="bi bi-arrow-counterclockwise" style="font-size: 0.8rem;"></i>';
+                    this.title = 'Batalkan hapus';
+                    this.classList.replace('btn-danger', 'btn-warning');
+                    this.removeEventListener('click', arguments.callee);
+                    this.addEventListener('click', function() {
+                        item.style.opacity = '1';
+                        item.querySelector('.deleted-gallery-input').disabled = true;
+                        this.innerHTML = '<i class="bi bi-x" style="font-size: 0.8rem;"></i>';
+                        this.title = 'Hapus foto ini';
+                        this.classList.replace('btn-warning', 'btn-danger');
+                    });
+                }
+            });
+        });
+
+        // --- Gallery Preview for new uploads ---
+        const galleryInput = document.getElementById('gallery');
+        const galleryPreviewContainer = document.getElementById('galleryPreviewContainer');
+        galleryInput.addEventListener('change', function() {
+            galleryPreviewContainer.innerHTML = '';
+            Array.from(this.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const col = document.createElement('div');
+                    col.className = 'col-6 col-md-3';
+                    col.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded-3 border" style="height: 140px; object-fit: cover; width: 100%;" alt="preview">`;
+                    galleryPreviewContainer.appendChild(col);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
     });
 
     // --- Stepper Navigation ---
@@ -321,7 +402,7 @@
         document.getElementById(`step${currentStep+1}`).classList.add('active');
         
         // Update Progress Bar
-        const progress = ((currentStep) / 3) * 100;
+        const progress = (currentStep / 4) * 100;
         document.getElementById('stepperProgress').style.width = progress + '%';
         
         // Update Indicators
@@ -348,7 +429,7 @@
         document.getElementById(`step${currentStep-1}`).classList.add('active');
 
         // Update Progress Bar
-        const progress = ((currentStep - 2) / 3) * 100;
+        const progress = ((currentStep - 2) / 4) * 100;
         document.getElementById('stepperProgress').style.width = progress + '%';
         
         document.querySelectorAll('.step-indicator').forEach(indicator => {
@@ -390,8 +471,11 @@
         });
         document.getElementById('prevFasilitas').textContent = selectedFas.length > 0 ? selectedFas.join(', ') : '-';
 
-        // Move to step 4
-        nextStep(3);
+        const galleryCount = document.getElementById('gallery').files.length;
+        document.getElementById('prevGallery').textContent = galleryCount > 0 ? galleryCount + ' foto baru diunggah' : 'Tidak ada foto baru';
+
+        // Move to step 5
+        nextStep(4);
     }
 </script>
 @endsection

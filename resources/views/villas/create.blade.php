@@ -40,9 +40,10 @@
                         <div class="progress-bar bg-primary" id="stepperProgress" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <button type="button" class="position-absolute top-0 start-0 translate-middle btn btn-sm btn-primary rounded-pill step-indicator" style="width: 2rem; height:2rem;" data-step="1">1</button>
-                    <button type="button" class="position-absolute top-0 start-33 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 33.33% !important;" data-step="2">2</button>
-                    <button type="button" class="position-absolute top-0 start-66 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 66.66% !important;" data-step="3">3</button>
-                    <button type="button" class="position-absolute top-0 start-100 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem;" data-step="4">4</button>
+                    <button type="button" class="position-absolute top-0 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 25% !important;" data-step="2">2</button>
+                    <button type="button" class="position-absolute top-0 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 50% !important;" data-step="3">3</button>
+                    <button type="button" class="position-absolute top-0 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem; left: 75% !important;" data-step="4">4</button>
+                    <button type="button" class="position-absolute top-0 start-100 translate-middle btn btn-sm btn-light border rounded-pill step-indicator" style="width: 2rem; height:2rem;" data-step="5">5</button>
                 </div>
             </div>
 
@@ -118,7 +119,7 @@
                 <!-- Step 2: Spesifikasi & Fasilitas -->
                 <div class="form-step d-none" id="step2">
                     <h5 class="mb-4 fw-bold">2. Spesifikasi Kamar & Fasilitas</h5>
-                    
+
                     <div class="mb-5">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="fw-bold mb-0">Spesifikasi Kamar</h6>
@@ -182,7 +183,7 @@
                 <!-- Step 3: Lokasi -->
                 <div class="form-step d-none" id="step3">
                     <h5 class="mb-4 fw-bold">3. Lokasi Villa</h5>
-                    
+
                     <div class="mb-4">
                         <label class="form-label fw-medium text-dark">Alamat Lengkap <span class="text-danger">*</span></label>
                         <textarea class="form-control form-control-fi @error('address') is-invalid @enderror" id="address" name="address" rows="3" required placeholder="Masukkan alamat lengkap villa...">{{ old('address') }}</textarea>
@@ -201,7 +202,7 @@
                             @error('longitude')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
-                    
+
                     <div class="mb-4">
                         <label class="form-label fw-medium text-dark">Pilih Lokasi pada Peta</label>
                         <div id="map" class="rounded-3 border"></div>
@@ -210,17 +211,38 @@
 
                     <div class="d-flex justify-content-between mt-5">
                         <button type="button" class="btn btn-light border px-4 py-2" onclick="prevStep(3)"><i class="bi bi-arrow-left me-2"></i> Sebelumnya</button>
+                        <button type="button" class="btn btn-primary px-4 py-2 fw-bold" onclick="nextStep(3)">Selanjutnya <i class="bi bi-arrow-right ms-2"></i></button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Galeri Kamar -->
+                <div class="form-step d-none" id="step4">
+                    <h5 class="mb-4 fw-bold">4. Galeri Kamar</h5>
+                    <p class="text-muted mb-4">Unggah beberapa foto kamar untuk ditampilkan sebagai galeri villa. Format yang diterima: JPG, PNG, GIF (maks. 2MB per foto).</p>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-medium text-dark" for="gallery">Pilih Foto Galeri</label>
+                        <input type="file" class="form-control form-control-fi @error('gallery.*') is-invalid @enderror" id="gallery" name="gallery[]" multiple accept="image/jpeg,image/png,image/gif">
+                        @error('gallery.*')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Anda bisa memilih lebih dari satu foto sekaligus.</small>
+                    </div>
+
+                    <!-- Preview area for selected images -->
+                    <div id="galleryPreviewContainer" class="row g-3 mt-2"></div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <button type="button" class="btn btn-light border px-4 py-2" onclick="prevStep(4)"><i class="bi bi-arrow-left me-2"></i> Sebelumnya</button>
                         <button type="button" class="btn btn-primary px-4 py-2 fw-bold" onclick="showPreview()">Selanjutnya <i class="bi bi-arrow-right ms-2"></i></button>
                     </div>
                 </div>
-                
-                <!-- Step 4: Preview -->
-                <div class="form-step d-none" id="step4">
-                    <h5 class="mb-4 fw-bold">4. Konfirmasi Data Villa</h5>
+
+                <!-- Step 5: Preview -->
+                <div class="form-step d-none" id="step5">
+                    <h5 class="mb-4 fw-bold">5. Konfirmasi Data Villa</h5>
                     <div class="alert alert-info">
                         Silakan periksa kembali data yang telah Anda masukkan. Klik "Simpan Data" jika sudah benar.
                     </div>
-                    
+
                     <div class="table-responsive border rounded-3 mb-4">
                         <table class="table table-borderless table-striped mb-0">
                             <tbody>
@@ -230,12 +252,13 @@
                                 <tr><th class="ps-3 py-3">Alamat</th><td id="prevAddress" class="py-3"></td></tr>
                                 <tr><th class="ps-3 py-3">Jumlah Kamar</th><td id="prevRooms" class="py-3"></td></tr>
                                 <tr><th class="ps-3 py-3">Fasilitas</th><td id="prevFasilitas" class="py-3"></td></tr>
+                                <tr><th class="ps-3 py-3">Galeri</th><td id="prevGallery" class="py-3"></td></tr>
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between mt-5">
-                        <button type="button" class="btn btn-light border px-4 py-2" onclick="prevStep(4)"><i class="bi bi-arrow-left me-2"></i> Sebelumnya</button>
+                        <button type="button" class="btn btn-light border px-4 py-2" onclick="prevStep(5)"><i class="bi bi-arrow-left me-2"></i> Sebelumnya</button>
                         <button type="submit" class="btn btn-success px-5 py-2 fw-bold">Simpan Data <i class="bi bi-check-lg ms-2"></i></button>
                     </div>
                 </div>
@@ -249,7 +272,7 @@
         // --- Bagi Hasil Logic ---
         const inputPengelola = document.getElementById('persenan_pengelola');
         const inputPemilik = document.getElementById('persenan_pemilik');
-        
+
         inputPengelola.addEventListener('input', function() {
             let val = parseInt(this.value) || 0;
             if (val > 100) { val = 100; this.value = 100; }
@@ -284,6 +307,23 @@
                 e.target.closest('.room-row').remove();
             }
         });
+
+        // --- Gallery Preview Logic ---
+        const galleryInput = document.getElementById('gallery');
+        const galleryPreviewContainer = document.getElementById('galleryPreviewContainer');
+        galleryInput.addEventListener('change', function() {
+            galleryPreviewContainer.innerHTML = '';
+            Array.from(this.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const col = document.createElement('div');
+                    col.className = 'col-6 col-md-3';
+                    col.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded-3 border" style="height: 140px; object-fit: cover; width: 100%;" alt="preview">`;
+                    galleryPreviewContainer.appendChild(col);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
     });
 
     // --- Stepper Navigation ---
@@ -305,11 +345,11 @@
         document.getElementById(`step${currentStep}`).classList.remove('active');
         document.getElementById(`step${currentStep+1}`).classList.remove('d-none');
         document.getElementById(`step${currentStep+1}`).classList.add('active');
-        
+
         // Update Progress Bar
-        const progress = ((currentStep) / 3) * 100;
+        const progress = (currentStep / 4) * 100;
         document.getElementById('stepperProgress').style.width = progress + '%';
-        
+
         // Update Indicators
         document.querySelectorAll('.step-indicator').forEach(indicator => {
             if(parseInt(indicator.dataset.step) <= currentStep + 1) {
@@ -320,7 +360,7 @@
                 indicator.classList.add('border');
             }
         });
-        
+
         // Fix Leaflet map sizing issue when map container is hidden on initialization
         if(currentStep + 1 === 3 && map) {
             setTimeout(() => { map.invalidateSize(); }, 300);
@@ -334,9 +374,9 @@
         document.getElementById(`step${currentStep-1}`).classList.add('active');
 
         // Update Progress Bar
-        const progress = ((currentStep - 2) / 3) * 100;
+        const progress = ((currentStep - 2) / 4) * 100;
         document.getElementById('stepperProgress').style.width = progress + '%';
-        
+
         document.querySelectorAll('.step-indicator').forEach(indicator => {
             if(parseInt(indicator.dataset.step) <= currentStep - 1) {
                 indicator.classList.replace('btn-light', 'btn-primary');
@@ -366,7 +406,7 @@
         document.getElementById('prevPrice').textContent = "Rp " + (document.getElementById('price').value || "0");
         document.getElementById('prevPersen').textContent = document.getElementById('persenan_pengelola').value + "% Pengelola, " + document.getElementById('persenan_pemilik').value + "% Pemilik";
         document.getElementById('prevAddress').textContent = document.getElementById('address').value;
-        
+
         let roomsCount = document.querySelectorAll('.room-row').length;
         document.getElementById('prevRooms').textContent = roomsCount + " tipe kamar";
 
@@ -376,8 +416,11 @@
         });
         document.getElementById('prevFasilitas').textContent = selectedFas.length > 0 ? selectedFas.join(', ') : '-';
 
-        // Move to step 4
-        nextStep(3);
+        const galleryCount = document.getElementById('gallery').files.length;
+        document.getElementById('prevGallery').textContent = galleryCount > 0 ? galleryCount + ' foto diunggah' : 'Tidak ada foto';
+
+        // Move to step 5
+        nextStep(4);
     }
 </script>
 @endsection
@@ -389,7 +432,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         var latInput = document.getElementById('latitude');
         var lngInput = document.getElementById('longitude');
-        
+
         var initLat = latInput.value ? parseFloat(latInput.value) : -8.409518; // Default Bali
         var initLng = lngInput.value ? parseFloat(lngInput.value) : 115.188916;
 
@@ -405,10 +448,10 @@
             latInput.value = e.latlng.lat.toFixed(6);
             lngInput.value = e.latlng.lng.toFixed(6);
         });
-        
+
         latInput.addEventListener('change', updateMarkerFromInput);
         lngInput.addEventListener('change', updateMarkerFromInput);
-        
+
         function updateMarkerFromInput() {
             if(latInput.value && lngInput.value) {
                 var newLatLng = new L.LatLng(parseFloat(latInput.value), parseFloat(lngInput.value));

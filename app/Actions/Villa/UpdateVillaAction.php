@@ -58,6 +58,24 @@ class UpdateVillaAction
             $villa->fasilitas()->sync([]);
         }
 
+        // Handle Gallery: delete marked images, then add new ones
+        if (isset($data['deleted_galleries']) && is_array($data['deleted_galleries'])) {
+            $toDelete = $villa->galleries()->whereIn('id', $data['deleted_galleries'])->get();
+            foreach ($toDelete as $galleryItem) {
+                Storage::disk('public')->delete($galleryItem->image);
+                $galleryItem->delete();
+            }
+        }
+
+        if (isset($data['gallery']) && is_array($data['gallery'])) {
+            foreach ($data['gallery'] as $image) {
+                if ($image instanceof \Illuminate\Http\UploadedFile) {
+                    $path = $image->store('villas/gallery', 'public');
+                    $villa->galleries()->create(['image' => $path]);
+                }
+            }
+        }
+
         return $villa;
     }
 }

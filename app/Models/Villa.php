@@ -49,4 +49,9 @@ class Villa extends Model
     {
         return $this->belongsToMany(Fasilitas::class, 'fasilitas_villa', 'villa_id', 'fasilitas_id');
     }
+
+    public function galleries()
+    {
+        return $this->hasMany(VillaGallery::class);
+    }
 }

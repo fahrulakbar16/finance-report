@@ -28,8 +28,12 @@ class UpdateVillaRequest extends FormRequest
             'rooms' => ['nullable', 'array'],
             'rooms.*.name' => ['required_with:rooms', 'string', 'max:255'],
             'rooms.*.amount' => ['required_with:rooms', 'integer', 'min:1'],
-            'fasilitas' => ['nullable', 'array'],
-            'fasilitas.*' => ['exists:fasilitas,id'],
+            'fasilitas' => 'nullable|array',
+            'fasilitas.*' => 'exists:fasilitas,id',
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'deleted_galleries' => 'nullable|array',
+            'deleted_galleries.*' => 'exists:villa_galleries,id',
         ];
     }
 
