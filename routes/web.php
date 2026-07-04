@@ -194,4 +194,5 @@ Route::middleware(['auth', 'role:pemilik|pengelola'])->group(function () {
 Route::middleware(['auth', 'role:pengelola'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('villas', VillaController::class);
+    Route::resource('admin-fasilitas', \App\Http\Controllers\FasilitasController::class)->names('fasilitas');
 });
