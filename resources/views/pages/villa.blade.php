@@ -1,108 +1,338 @@
-@extends('layouts.landing')
+@extends('layouts.search')
 
-@section('title', 'Koleksi Villa')
-@section('description', 'Jelajahi koleksi villa premium Athara Villas — dari villa romantis 2 kamar hingga villa besar untuk rombongan.')
-
-@section('banner-label', 'Koleksi Villa')
-@section('banner', 'Temukan Villa Impian Anda')
-@section('banner-desc', 'Pilihan villa premium dengan berbagai kapasitas dan fasilitas terbaik untuk momen istimewa Anda.')
+@section('title', 'Athara Villas - Booking Villa Murah Online')
 
 @section('styles')
 <style>
-    .villa-list { padding: 5rem 0 6rem; background: var(--bg-main); }
-    .filter-bar { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:3rem; }
-    .filter-btn {
-        padding: 0.45rem 1.2rem; border-radius:2rem; border: 1.5px solid #e5e7eb;
-        background:#fff; color:var(--text-muted); font-size:0.85rem; font-weight:500;
-        cursor:pointer; transition:all 0.25s;
+    /* Hero Section */
+    .hero-section {
+        position: relative;
+        width: 100%;
+        min-height: 520px;
+        background: url('https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+        display: flex;
+        align-items: center;
+        padding: 4rem 0;
     }
-    .filter-btn:hover, .filter-btn.active { border-color:var(--accent); color:var(--primary); background:rgba(201,168,76,0.08); }
-    .villa-count { color:var(--text-muted); font-size:0.875rem; margin-bottom:2rem; }
-    .villa-count strong { color:var(--primary); }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to right, rgba(27,61,47,0.85) 0%, rgba(27,61,47,0.2) 100%);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .hero-title {
+        color: #ffffff;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 700;
+        line-height: 1.1;
+        max-width: 550px;
+        margin-bottom: 2rem;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    /* Search Card */
+    .search-card {
+        background: #ffffff;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+
+    .search-promo {
+        background: linear-gradient(135deg, var(--accent), #b49137);
+        color: var(--primary);
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+    }
+
+    .search-promo-icon {
+        width: 42px;
+        height: 42px;
+        background: rgba(255,255,255,0.3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+
+    .search-body {
+        padding: 1.75rem;
+    }
+
+    .search-input-group {
+        background: #f4f5f7;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        padding: 0.85rem 1.25rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+        border: 1px solid transparent;
+    }
+
+    .search-input-group:focus-within {
+        border-color: var(--accent);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+    }
+
+    .search-input-group i {
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        margin-right: 0.85rem;
+    }
+
+    .search-input-group input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 1rem;
+        color: var(--text-dark);
+        font-weight: 500;
+    }
+
+    .btn-search {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        width: 100%;
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin-top: 0.5rem;
+        transition: background 0.3s;
+    }
+    .btn-search:hover {
+        background: var(--accent);
+        color: var(--primary);
+    }
+
+    /* Recent Searches */
+    .recent-section {
+        padding: 4rem 0;
+        background: var(--bg-body);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .clear-link {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    .clear-link:hover {
+        color: var(--accent);
+    }
+
+    .recent-scroll {
+        display: flex;
+        gap: 1.25rem;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+        scrollbar-width: none;
+    }
+    .recent-scroll::-webkit-scrollbar { display: none; }
+
+    .recent-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 280px;
+        cursor: pointer;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .recent-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 4px 15px rgba(201,168,76,0.1);
+    }
+
+    .recent-img {
+        width: 56px;
+        height: 56px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .recent-info h4 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin: 0 0 0.2rem;
+        color: var(--text-dark);
+    }
+
+    .recent-info p {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 991px) {
+        .hero-section {
+            background-position: center right;
+        }
+        .hero-content {
+            flex-direction: column;
+            justify-content: center;
+        }
+        .hero-title {
+            text-align: center;
+            font-size: 2.5rem;
+        }
+        .search-card {
+            max-width: 100%;
+        }
+    }
 </style>
 @endsection
 
 @section('content')
 
-<section class="villa-list">
-    <div class="container">
-        {{-- Filter bar --}}
-        <div class="filter-bar" id="filterBar">
-            <button class="filter-btn active" data-filter="all">Semua</button>
-            <button class="filter-btn" data-filter="2">2 Kamar</button>
-            <button class="filter-btn" data-filter="3">3 Kamar</button>
-            <button class="filter-btn" data-filter="4">4 Kamar</button>
-            <button class="filter-btn" data-filter="5">5 Kamar</button>
-        </div>
+    <div class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
 
-        <p class="villa-count">Menampilkan <strong>{{ count($villas) }}</strong> villa</p>
+                <h1 class="hero-title">Booking villa mewah online dengan harga promo</h1>
 
-        <div class="row g-4" id="villaGrid">
-            @foreach($villas as $v)
-            <div class="col-md-6 col-lg-4 d-flex fade-up villa-item" data-bedrooms="{{ $v['bedrooms'] }}">
-                <div class="v-card w-100">
-                    <div class="v-card-img">
-                        <img src="{{ $v['thumb'] }}" alt="{{ $v['name'] }}" loading="lazy">
-                        @if($v['badge'])
-                        <span class="v-pill">{{ $v['badge'] }}</span>
-                        @endif
+                <div class="search-card">
+                    <div class="search-promo">
+                        <div class="search-promo-icon">
+                            <i class="bi bi-tag-fill"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:700;font-size:1rem;">Promo Spesial Member</div>
+                            <div style="font-size:0.85rem;opacity:0.9;">Diskon hingga 20% untuk pemesanan hari ini!</div>
+                        </div>
                     </div>
-                    <div class="v-body">
-                        <h3 class="v-name">{{ $v['name'] }}</h3>
-                        <div class="v-meta">
-                            <span><i class="bi bi-people-fill"></i> {{ $v['capacity'] }} Orang</span>
-                            <span><i class="bi bi-door-closed-fill"></i> {{ $v['bedrooms'] }} Kamar</span>
-                            <span><i class="bi bi-droplet-fill"></i> Private Pool</span>
-                            <span><i class="bi bi-rulers"></i> {{ $v['size'] }}</span>
-                        </div>
-                        <p class="v-desc">{{ Str::limit($v['description'], 100) }}</p>
-                        @if(isset($v['price']))
-                        <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.85rem;">
-                            Mulai <strong style="color:var(--primary);font-size:0.95rem;">Rp {{ number_format($v['price'],0,',','.') }}</strong> / malam
-                        </div>
-                        @endif
-                        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-                            <a href="{{ route('villa.show', $v['slug']) }}" class="btn-underline">
-                                Lihat Detail <i class="bi bi-arrow-right"></i>
-                            </a>
-                            <a href="{{ route('booking.show', $v['slug']) }}" class="btn-gold" style="padding:0.55rem 1.25rem;font-size:0.82rem;">
-                                <i class="bi bi-calendar-check-fill"></i> Pesan
-                            </a>
+
+                    <div class="search-body">
+                        <form action="#" method="GET">
+                            <div class="search-input-group">
+                                <i class="bi bi-search"></i>
+                                <input type="text" placeholder="Cari nama villa atau lokasi...">
+                                <i class="bi bi-crosshair text-muted" style="font-size:1.1rem;margin-right:0;cursor:pointer;" title="Gunakan lokasi saat ini"></i>
+                            </div>
+
+                            <div class="search-input-group">
+                                <i class="bi bi-calendar-event"></i>
+                                <input type="text" placeholder="Check-in - Check-out" value="Besok - Lusa" readonly style="cursor:pointer;">
+                            </div>
+
+                            <div class="search-input-group">
+                                <i class="bi bi-people"></i>
+                                <input type="text" placeholder="Tamu & Kamar" value="2 Dewasa, 1 Kamar" readonly style="cursor:pointer;">
+                            </div>
+
+                            <button type="button" class="btn-search">Ayo Cari</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="recent-section">
+        <div class="container">
+            <div class="section-header">
+                <h3 class="section-title">Riwayat Pencarianmu</h3>
+                <a href="#" class="clear-link">Hapus semua</a>
+            </div>
+
+            <div class="recent-scroll">
+                @php
+                    $recentVillas = \App\Models\Villa::take(3)->get();
+                @endphp
+
+                @foreach($recentVillas as $villa)
+                <div class="recent-card">
+                    <img src="{{ filter_var($villa->image, FILTER_VALIDATE_URL) ? $villa->image : asset('storage/' . $villa->image) }}" class="recent-img" alt="{{ $villa->name }}">
+                    <div class="recent-info">
+                        <h4>{{ Str::limit($villa->name, 22) }}</h4>
+                        <p>{{ Str::limit($villa->address, 25) }}</p>
+                    </div>
+                </div>
+                @endforeach
+
+                @if($recentVillas->count() < 3)
+                <div class="recent-card">
+                    <div class="recent-img" style="background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:var(--text-muted);"><i class="bi bi-geo-alt"></i></div>
+                    <div class="recent-info">
+                        <h4>Batu, Jawa Timur</h4>
+                        <p>12 - 14 Agustus • 2 Tamu</p>
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="recent-section" style="padding-top: 0;">
+        <div class="container">
+            <div class="section-header">
+                <h3 class="section-title">Rekomendasi Untukmu</h3>
+            </div>
+
+            <div class="row g-4">
+                @php
+                    $villas = \App\Models\Villa::skip(3)->take(4)->get();
+                    if($villas->isEmpty()) $villas = \App\Models\Villa::take(4)->get();
+                @endphp
+                @foreach($villas as $villa)
+                <div class="col-md-6 col-lg-3">
+                    <div class="search-card" style="max-width:100%;box-shadow:0 4px 15px rgba(0,0,0,0.05);transition:transform 0.3s; height:100%;">
+                        <img src="{{ filter_var($villa->image, FILTER_VALIDATE_URL) ? $villa->image : asset('storage/' . $villa->image) }}" style="width:100%;height:180px;object-fit:cover;" alt="{{ $villa->name }}">
+                        <div style="padding:1.25rem;">
+                            <h4 style="font-weight:700;font-size:1.1rem;margin:0 0 0.4rem;">{{ $villa->name }}</h4>
+                            <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;"><i class="bi bi-geo-alt-fill text-warning"></i> {{ Str::limit($villa->address, 25) }}</div>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span style="font-weight:700;color:var(--accent);font-size:1.05rem;">Rp {{ number_format($villa->price,0,',','.') }}<small style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">/mlm</small></span>
+                                <a href="{{ route('villa.show', $villa->id) }}" class="btn btn-sm" style="background:var(--primary);color:#fff;border-radius:8px;font-size:0.85rem;padding:0.4rem 1rem;">Detail</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+                @endforeach
             </div>
-            @endforeach
         </div>
     </div>
-</section>
 
-{{-- CTA strip --}}
-<section style="background:var(--primary);padding:4rem 0;text-align:center;">
-    <div class="container">
-        <h2 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:#fff;font-weight:600;margin-bottom:0.75rem;">
-            Tidak Yakin Pilih yang Mana?
-        </h2>
-        <p style="color:rgba(255,255,255,0.65);margin-bottom:2rem;">Tim kami siap membantu Anda menemukan villa yang paling sesuai kebutuhan.</p>
-        <a href="{{ route('kontak') }}" class="btn-gold">Konsultasi Gratis <i class="bi bi-whatsapp"></i></a>
-    </div>
-</section>
-
-@endsection
-
-@section('scripts')
-<script>
-    // Simple client-side filter
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const filter = btn.dataset.filter;
-            document.querySelectorAll('.villa-item').forEach(item => {
-                const match = filter === 'all' || item.dataset.bedrooms === filter;
-                item.style.display = match ? '' : 'none';
-            });
-        });
-    });
-</script>
 @endsection

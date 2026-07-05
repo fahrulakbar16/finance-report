@@ -18,32 +18,55 @@ class RoleAndUserSeeder extends Seeder
     public function run(): void
     {
         // 1. Create Roles
-        $rolePemilik = Role::create(['name' => 'pemilik']);
-        $rolePengelola = Role::create(['name' => 'pengelola']);
+        $rolePemilik = Role::firstOrCreate(['name' => 'pemilik']);
+        $rolePengelola = Role::firstOrCreate(['name' => 'pengelola']);
+        $roleCustomer = Role::firstOrCreate(['name' => 'customer']);
 
         // 2. Create User Pemilik
-        $userPemilik = User::create([
-            'name' => 'Pemilik Villa',
-            'email' => 'pemilik@villa.com',
-            'password' => Hash::make('password'),
-        ]);
-        $userPemilik->assignRole($rolePemilik);
+        $userPemilik = User::firstOrCreate(
+            ['email' => 'pemilik@villa.com'],
+            [
+                'name' => 'Pemilik Villa',
+                'password' => Hash::make('password'),
+            ]
+        );
+        if (!$userPemilik->hasRole('pemilik')) {
+            $userPemilik->assignRole($rolePemilik);
+        }
 
         // 3. Create User Pengelola
-        $userPengelola = User::create([
-            'name' => 'Pengelola Villa',
-            'email' => 'pengelola@villa.com',
-            'password' => Hash::make('password'),
-        ]);
-        $userPengelola->assignRole($rolePengelola);
+        $userPengelola = User::firstOrCreate(
+            ['email' => 'pengelola@villa.com'],
+            [
+                'name' => 'Pengelola Villa',
+                'password' => Hash::make('password'),
+            ]
+        );
+        if (!$userPengelola->hasRole('pengelola')) {
+            $userPengelola->assignRole($rolePengelola);
+        }
+
+        // 3b. Create User Customer
+        $userCustomer = User::firstOrCreate(
+            ['email' => 'customer@villa.com'],
+            [
+                'name' => 'Customer Villa',
+                'password' => Hash::make('password'),
+            ]
+        );
+        if (!$userCustomer->hasRole('customer')) {
+            $userCustomer->assignRole($roleCustomer);
+        }
 
         // 4. Create Dummy Villa tied to Pemilik
-        $villa = Villa::create([
-            'pemilik_id' => $userPemilik->id,
-            'name' => 'Villa Sunset Paradise',
-            'email' => 'sunset@villa.com',
-            'description' => 'Villa mewah dengan pemandangan sunset yang indah.',
-        ]);
+        $villa = Villa::firstOrCreate(
+            ['email' => 'sunset@villa.com'],
+            [
+                'pemilik_id' => $userPemilik->id,
+                'name' => 'Villa Sunset Paradise',
+                'description' => 'Villa mewah dengan pemandangan sunset yang indah.',
+            ]
+        );
 
         // 5. Create Dummy Transaction Data tied to Villa
         Transaction::create([

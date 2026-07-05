@@ -1,12 +1,12 @@
-@extends('layouts.landing')
+@extends('layouts.search')
 
-@section('title', $villa['name'])
-@section('description', $villa['description'])
+@section('title', $villa->name)
+@section('description', $villa->description)
 
 @section('breadcrumb-parent', 'Villa')
 @section('breadcrumb-parent-url', route('villa.index'))
-@section('banner-label', $villa['tagline'])
-@section('banner', $villa['name'])
+@section('banner-label', '')
+@section('banner', $villa->name)
 
 @section('styles')
 <style>
@@ -58,16 +58,9 @@
 <section class="villa-content">
     <div class="container">
         <div class="row g-4 mb-5">
-            <div class="col-lg-7 fade-up">
+            <div class="col-lg-12 fade-up">
                 <div class="gallery-main">
-                    <img src="{{ $villa['gallery'][0] }}" alt="{{ $villa['name'] }}" id="mainImg">
-                </div>
-            </div>
-            <div class="col-lg-5 fade-up d2">
-                <div class="gallery-thumbs">
-                    @foreach(array_slice($villa['gallery'], 1, 4) as $img)
-                    <img src="{{ $img }}" alt="{{ $villa['name'] }}" onclick="document.getElementById('mainImg').src='{{ $img }}'">
-                    @endforeach
+                    <img src="{{ filter_var($villa->image, FILTER_VALIDATE_URL) ? $villa->image : asset('storage/' . $villa->image) }}" alt="{{ $villa->name }}" id="mainImg">
                 </div>
             </div>
         </div>
@@ -76,18 +69,17 @@
             {{-- Left: description & details --}}
             <div class="col-lg-8">
                 <div class="fade-up">
-                    <span class="sec-label">{{ $villa['tagline'] }}</span>
-                    <h2 class="sec-title">{{ $villa['name'] }}</h2>
-                    <p style="color:var(--text-muted);line-height:1.85;font-size:0.96rem;">{{ $villa['description'] }}</p>
+                    <h2 class="sec-title">{{ $villa->name }}</h2>
+                    <p style="color:var(--text-muted);line-height:1.85;font-size:0.96rem;">{{ $villa->description }}</p>
                 </div>
 
                 {{-- Facilities --}}
                 <div class="mt-4 fade-up d1">
                     <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:var(--primary);margin-bottom:0;">Fasilitas Villa</h3>
                     <div class="fac-grid">
-                        @foreach($villa['facilities'] as $fac)
+                        @foreach($villa->fasilitas ?? [] as $fac)
                         <div class="fac-item">
-                            <i class="bi bi-check-circle-fill"></i> {{ $fac }}
+                            <i class="bi bi-check-circle-fill"></i> {{ $fac->name }}
                         </div>
                         @endforeach
                     </div>
@@ -95,13 +87,10 @@
 
                 {{-- Nearby --}}
                 <div class="mt-5 fade-up d2">
-                    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:var(--primary);margin-bottom:1rem;">Tempat Terdekat</h3>
-                    @foreach($villa['nearby'] as $place)
+                    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:var(--primary);margin-bottom:1rem;">Alamat</h3>
                     <div class="nearby-item">
-                        <span class="nearby-name"><i class="bi bi-geo-alt-fill"></i> {{ $place['name'] }}</span>
-                        <span class="nearby-dist">{{ $place['dist'] }}</span>
+                        <span class="nearby-name"><i class="bi bi-geo-alt-fill"></i> {{ $villa->address }}</span>
                     </div>
-                    @endforeach
                 </div>
             </div>
 
@@ -112,19 +101,19 @@
 
                     <div class="info-stat">
                         <div class="info-stat-icon"><i class="bi bi-people-fill"></i></div>
-                        <div><div class="info-stat-label">Kapasitas</div><div class="info-stat-value">{{ $villa['capacity'] }} Orang</div></div>
+                        <div><div class="info-stat-label">Kapasitas</div><div class="info-stat-value">- Orang</div></div>
                     </div>
                     <div class="info-stat">
                         <div class="info-stat-icon"><i class="bi bi-door-closed-fill"></i></div>
-                        <div><div class="info-stat-label">Kamar Tidur</div><div class="info-stat-value">{{ $villa['bedrooms'] }} Kamar</div></div>
+                        <div><div class="info-stat-label">Kamar Tidur</div><div class="info-stat-value">{{ $villa->rooms->count() ?? 0 }} Kamar</div></div>
                     </div>
                     <div class="info-stat">
                         <div class="info-stat-icon"><i class="bi bi-droplet-half"></i></div>
-                        <div><div class="info-stat-label">Kamar Mandi</div><div class="info-stat-value">{{ $villa['bathrooms'] }} Kamar</div></div>
+                        <div><div class="info-stat-label">Kamar Mandi</div><div class="info-stat-value">- Kamar</div></div>
                     </div>
                     <div class="info-stat">
                         <div class="info-stat-icon"><i class="bi bi-rulers"></i></div>
-                        <div><div class="info-stat-label">Luas Villa</div><div class="info-stat-value">{{ $villa['size'] }}</div></div>
+                        <div><div class="info-stat-label">Luas Villa</div><div class="info-stat-value">-</div></div>
                     </div>
                     <div class="info-stat">
                         <div class="info-stat-icon"><i class="bi bi-droplet-fill"></i></div>
@@ -132,15 +121,12 @@
                     </div>
 
                     <div style="margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid #f3f4f6;">
-                        @if(isset($villa['price']))
+                        @if(isset($villa->price))
                         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1rem;">
                             <span style="font-size:0.78rem;color:var(--text-muted);">Mulai dari</span>
-                            <span style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--primary);">Rp {{ number_format($villa['price'],0,',','.') }}<span style="font-size:0.78rem;font-weight:400;color:var(--text-muted);"> / malam</span></span>
+                            <span style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--primary);">Rp {{ number_format($villa->price,0,',','.') }}<span style="font-size:0.78rem;font-weight:400;color:var(--text-muted);"> / malam</span></span>
                         </div>
                         @endif
-                        <a href="{{ route('booking.show', $villa['slug']) }}" class="btn-gold w-100 justify-content-center mb-2">
-                            <i class="bi bi-calendar-check-fill"></i> Pesan Sekarang
-                        </a>
                         <a href="{{ route('kontak') }}" class="btn-outline-dark w-100 justify-content-center">
                             <i class="bi bi-envelope"></i> Tanya Dulu
                         </a>
@@ -169,16 +155,14 @@
             <div class="col-md-4 d-flex fade-up d{{ $loop->index + 1 }}">
                 <div class="v-card w-100">
                     <div class="v-card-img">
-                        <img src="{{ $r['thumb'] }}" alt="{{ $r['name'] }}" loading="lazy">
-                        @if($r['badge'])<span class="v-pill">{{ $r['badge'] }}</span>@endif
+                        <img src="{{ filter_var($r->image, FILTER_VALIDATE_URL) ? $r->image : asset('storage/' . $r->image) }}" alt="{{ $r->name }}" loading="lazy">
                     </div>
                     <div class="v-body">
-                        <h3 class="v-name">{{ $r['name'] }}</h3>
+                        <h3 class="v-name">{{ $r->name }}</h3>
                         <div class="v-meta">
-                            <span><i class="bi bi-people-fill"></i> {{ $r['capacity'] }} Orang</span>
-                            <span><i class="bi bi-door-closed-fill"></i> {{ $r['bedrooms'] }} Kamar</span>
+                            <span><i class="bi bi-geo-alt-fill"></i> {{ Str::limit($r->address, 20) }}</span>
                         </div>
-                        <a href="{{ route('villa.show', $r['slug']) }}" class="btn-underline">Lihat Detail <i class="bi bi-arrow-right"></i></a>
+                        <a href="{{ route('villa.show', $r->id) }}" class="btn-underline">Lihat Detail <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>

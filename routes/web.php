@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VillaController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\PublicVillaController;
 use Illuminate\Support\Facades\Auth;
 
 // ── Static villa data (backend team will replace with DB queries) ──
@@ -151,16 +152,8 @@ Route::get('/fasilitas', fn() => view('pages.fasilitas'))->name('fasilitas');
 Route::get('/testimoni', fn() => view('pages.testimoni'))->name('testimoni');
 Route::get('/kontak',    fn() => view('pages.kontak'))->name('kontak');
 
-Route::get('/villa', function () use ($villaList) {
-    return view('pages.villa', ['villas' => $villaList]);
-})->name('villa.index');
-
-Route::get('/villa/{slug}', function ($slug) use ($villaList) {
-    $villa   = collect($villaList)->firstWhere('slug', $slug);
-    abort_if(!$villa, 404);
-    $related = collect($villaList)->where('slug', '!=', $slug)->take(3)->values()->all();
-    return view('pages.villa-detail', compact('villa', 'related'));
-})->name('villa.show');
+Route::get('/villa', [PublicVillaController::class, 'index'])->name('villa.index');
+Route::get('/villa/{villa}', [PublicVillaController::class, 'show'])->name('villa.show');
 
 Route::get('/booking', function () use ($villaList) {
     return view('pages.booking', ['villas' => $villaList, 'selectedSlug' => null]);
@@ -175,7 +168,22 @@ Route::get('/booking/{slug}', function ($slug) use ($villaList) {
 // ── Auth ──
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
+    ->middleware(['auth', 'role:pemilik|pengelola'])
+    ->name('home');
+
+// ── Customer Pages ──
+Route::prefix('customer')->name('customer.')->group(function () {
+    Route::get('/login', [App\Http\Controllers\CustomerAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [App\Http\Controllers\CustomerAuthController::class, 'login']);
+    Route::post('/logout', [App\Http\Controllers\CustomerAuthController::class, 'logout'])->name('logout');
+
+    Route::middleware(['auth', 'role:customer'])->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\CustomerDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/history', [App\Http\Controllers\CustomerDashboardController::class, 'history'])->name('history');
+        Route::get('/account', [App\Http\Controllers\CustomerDashboardController::class, 'account'])->name('account');
+    });
+});
 
 Route::middleware(['auth', 'role:pemilik|pengelola'])->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');

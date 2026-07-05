@@ -642,9 +642,6 @@
                     <a href="{{ route('booking.index') }}" class="btn-nav-login">
                         <i class="bi bi-calendar-check-fill" style="font-size:0.85rem;"></i> Reservasi
                     </a>
-                    <a href="{{ route('login') }}" class="btn-nav-login" style="background:transparent;border:1.5px solid rgba(255,255,255,0.35);color:#fff;font-size:0.8rem;padding:0.45rem 1rem;">
-                        <i class="bi bi-box-arrow-in-right" style="font-size:0.8rem;"></i> Admin
-                    </a>
                 </div>
             </div>
         </div>
