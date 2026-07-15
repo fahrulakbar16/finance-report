@@ -265,13 +265,13 @@
         <i class="bi bi-house-door{{ request()->routeIs('villa.index') ? '-fill' : '' }}"></i>
         <span>Home</span>
     </a>
-    <a href="{{ route('customer.history') }}" class="bottom-nav-item {{ request()->routeIs('customer.history') ? 'active' : '' }}">
+    <a href="{{ auth()->check() ? route('customer.history') : route('customer.login') }}" class="bottom-nav-item {{ request()->routeIs('customer.history') ? 'active' : '' }}">
         <i class="bi bi-clock-history"></i>
         <span>History</span>
     </a>
-    <a href="{{ route('customer.account') }}" class="bottom-nav-item {{ request()->routeIs('customer.account') ? 'active' : '' }}">
-        <i class="bi bi-person{{ request()->routeIs('customer.account') ? '-fill' : '' }}"></i>
-        <span>Akun</span>
+    <a href="{{ auth()->check() ? route('customer.account') : route('customer.login') }}" class="bottom-nav-item {{ request()->routeIs('customer.account') || request()->routeIs('customer.login') ? 'active' : '' }}">
+        <i class="bi bi-person{{ request()->routeIs('customer.account') || request()->routeIs('customer.login') ? '-fill' : '' }}"></i>
+        <span>{{ auth()->check() ? 'Akun' : 'Login' }}</span>
     </a>
 </div>
 

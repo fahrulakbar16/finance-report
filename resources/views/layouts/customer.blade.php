@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>@yield('title', 'Athara Villas')</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
@@ -31,7 +31,33 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Top Header */
+        /* ── Navbar (PC Only) ── */
+        .site-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1050;
+            background: #ffffff;
+            padding: 0.85rem 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            display: none; /* hidden on mobile by default */
+        }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem; font-weight: 700;
+            color: #1B3D2F; text-decoration: none;
+            letter-spacing: 0.06em; white-space: nowrap;
+        }
+        .btn-nav-login {
+            background: transparent; border: 1.5px solid #e5e7eb; color: var(--text-dark);
+            padding: 0.45rem 1.1rem; border-radius: 2rem; font-weight: 600;
+            font-size: 0.8rem; text-decoration: none; transition: all 0.3s;
+            display: inline-flex; align-items: center; gap: 0.35rem;
+        }
+        .btn-nav-login:hover { border-color: var(--accent); color: var(--accent); }
+        .nav-collapse { display: flex; align-items: center; gap: 1.5rem; }
+
+        /* Top Header (Mobile) */
         .app-header {
             background: var(--surface);
             padding: 1rem 1.25rem;
@@ -109,6 +135,14 @@
             background: var(--accent);
         }
 
+        /* PC Layout Adjustments */
+        @media (min-width: 992px) {
+            .app-header { display: none !important; }
+            .bottom-nav { display: none !important; }
+            .site-nav { display: block; }
+            body { padding-top: 80px; padding-bottom: 0; }
+        }
+
         /* Utilities */
         .content-area {
             padding: 1.25rem;
@@ -136,6 +170,39 @@
 </head>
 <body>
 
+    {{-- ══ NAVBAR (PC ONLY) ══ --}}
+    <nav class="site-nav">
+        <div class="container">
+            <div class="nav-inner">
+                <a href="{{ route('landing') }}" class="nav-brand">Athara Villas</a>
+                <div class="nav-collapse">
+                    @auth
+                        <div class="dropdown">
+                            <a href="#" class="btn-nav-login dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="border:none;">
+                                <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" style="border:none;box-shadow:0 10px 30px rgba(0,0,0,0.1);border-radius:12px;margin-top:0.5rem;font-size:0.9rem;">
+                                <li><a class="dropdown-item py-2" href="{{ route('customer.history') }}"><i class="bi bi-clock-history me-2 text-muted"></i> History</a></li>
+                                <li><a class="dropdown-item py-2" href="{{ route('customer.account') }}"><i class="bi bi-person me-2 text-muted"></i> Akun</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{{ route('customer.logout') }}" method="POST" style="margin:0;">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item py-2 text-danger" style="background:none;border:none;width:100%;text-align:left;"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    @else
+                        <a href="{{ route('customer.login') }}" class="btn-nav-login">
+                            <i class="bi bi-person"></i> Login / Daftar
+                        </a>
+                    @endauth
+                </div>
+            </div>
+        </div>
+    </nav>
+
     @hasSection('header')
         <div class="app-header">
             @yield('header')
@@ -152,13 +219,13 @@
             <i class="bi bi-house-door{{ request()->routeIs('villa.index') ? '-fill' : '' }}"></i>
             <span>Home</span>
         </a>
-        <a href="{{ route('customer.history') }}" class="nav-item {{ request()->routeIs('customer.history') ? 'active' : '' }}">
+        <a href="{{ auth()->check() ? route('customer.history') : route('customer.login') }}" class="nav-item {{ request()->routeIs('customer.history') ? 'active' : '' }}">
             <i class="bi bi-clock-history"></i>
             <span>History</span>
         </a>
-        <a href="{{ route('customer.account') }}" class="nav-item {{ request()->routeIs('customer.account') ? 'active' : '' }}">
-            <i class="bi bi-person{{ request()->routeIs('customer.account') ? '-fill' : '' }}"></i>
-            <span>Akun</span>
+        <a href="{{ auth()->check() ? route('customer.account') : route('customer.login') }}" class="nav-item {{ request()->routeIs('customer.account') || request()->routeIs('customer.login') ? 'active' : '' }}">
+            <i class="bi bi-person{{ request()->routeIs('customer.account') || request()->routeIs('customer.login') ? '-fill' : '' }}"></i>
+            <span>{{ auth()->check() ? 'Akun' : 'Login' }}</span>
         </a>
     </div>
 
