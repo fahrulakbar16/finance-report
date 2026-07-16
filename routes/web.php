@@ -172,6 +172,16 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
     ->middleware(['auth', 'role:pemilik|pengelola'])
     ->name('home');
 
+// ── Checkout & Payment ──
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/voucher', [App\Http\Controllers\CheckoutController::class, 'applyVoucher'])->name('checkout.voucher');
+    Route::post('/checkout/process', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process');
+});
+
+// Webhook DOKU
+Route::post('/doku/notification', [App\Http\Controllers\CheckoutController::class, 'dokuNotification'])->name('doku.notification');
+
 // ── Customer Pages ──
 Route::prefix('customer')->name('customer.')->group(function () {
     Route::get('/login', [App\Http\Controllers\CustomerAuthController::class, 'showLoginForm'])->name('login');
@@ -202,5 +212,5 @@ Route::middleware(['auth', 'role:pemilik|pengelola'])->group(function () {
 Route::middleware(['auth', 'role:pengelola'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('villas', VillaController::class);
-    Route::resource('admin-fasilitas', \App\Http\Controllers\FasilitasController::class)->names('fasilitas');
+    Route::resource('admin-fasilitas', \App\Http\Controllers\FasilitasController::class)->parameters(['admin-fasilitas' => 'fasilita'])->names('fasilitas');
 });

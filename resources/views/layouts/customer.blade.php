@@ -182,7 +182,7 @@
                                 <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" style="border:none;box-shadow:0 10px 30px rgba(0,0,0,0.1);border-radius:12px;margin-top:0.5rem;font-size:0.9rem;">
-                                <li><a class="dropdown-item py-2" href="{{ route('customer.history') }}"><i class="bi bi-clock-history me-2 text-muted"></i> History</a></li>
+                                <li><a class="dropdown-item py-2" href="{{ route('customer.history') }}"><i class="bi bi-journal-text me-2 text-muted"></i> Pemesanan</a></li>
                                 <li><a class="dropdown-item py-2" href="{{ route('customer.account') }}"><i class="bi bi-person me-2 text-muted"></i> Akun</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
@@ -220,8 +220,8 @@
             <span>Home</span>
         </a>
         <a href="{{ auth()->check() ? route('customer.history') : route('customer.login') }}" class="nav-item {{ request()->routeIs('customer.history') ? 'active' : '' }}">
-            <i class="bi bi-clock-history"></i>
-            <span>History</span>
+            <i class="bi bi-journal-text"></i>
+            <span>Pemesanan</span>
         </a>
         <a href="{{ auth()->check() ? route('customer.account') : route('customer.login') }}" class="nav-item {{ request()->routeIs('customer.account') || request()->routeIs('customer.login') ? 'active' : '' }}">
             <i class="bi bi-person{{ request()->routeIs('customer.account') || request()->routeIs('customer.login') ? '-fill' : '' }}"></i>

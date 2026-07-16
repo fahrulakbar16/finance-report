@@ -266,8 +266,8 @@
         <span>Home</span>
     </a>
     <a href="{{ auth()->check() ? route('customer.history') : route('customer.login') }}" class="bottom-nav-item {{ request()->routeIs('customer.history') ? 'active' : '' }}">
-        <i class="bi bi-clock-history"></i>
-        <span>History</span>
+        <i class="bi bi-journal-text"></i>
+        <span>Pemesanan</span>
     </a>
     <a href="{{ auth()->check() ? route('customer.account') : route('customer.login') }}" class="bottom-nav-item {{ request()->routeIs('customer.account') || request()->routeIs('customer.login') ? 'active' : '' }}">
         <i class="bi bi-person{{ request()->routeIs('customer.account') || request()->routeIs('customer.login') ? '-fill' : '' }}"></i>

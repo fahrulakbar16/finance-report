@@ -169,7 +169,7 @@
 <div class="pc-layout-container">
     <div class="row g-4">
         <!-- Sidebar -->
-        <div class="col-lg-4 col-xl-3">
+        <div class="col-lg-4 col-xl-3" id="mobile-sidebar">
             <div class="sidebar-wrapper fade-in">
                 <!-- Profile Header -->
                 <div class="profile-header">
@@ -185,28 +185,20 @@
 
                 <!-- Menus -->
                 <div class="menu-group">
-                    <a href="#" class="menu-item active">
+                    <a href="javascript:void(0)" data-target="#tab-akun" class="menu-item active custom-tab-trigger">
                         <div><i class="bi bi-person icon"></i> Pengaturan Akun</div>
                         <i class="bi bi-chevron-right text-muted d-lg-none"></i>
                     </a>
-                    <a href="{{ route('customer.history') }}" class="menu-item">
-                        <div><i class="bi bi-clock-history icon"></i> Transaksi Saya</div>
+                    <a href="javascript:void(0)" data-target="#tab-transaksi" class="menu-item custom-tab-trigger">
+                        <div><i class="bi bi-journal-text icon"></i> Transaksi Saya</div>
                         <i class="bi bi-chevron-right text-muted d-lg-none"></i>
                     </a>
-                    <a href="#" class="menu-item">
+                    <a href="javascript:void(0)" data-target="#tab-voucher" class="menu-item custom-tab-trigger">
                         <div><i class="bi bi-ticket-perforated icon"></i> Voucher Promo</div>
                         <i class="bi bi-chevron-right text-muted d-lg-none"></i>
                     </a>
-                    <a href="#" class="menu-item">
+                    <a href="javascript:void(0)" data-target="#tab-keamanan" class="menu-item custom-tab-trigger">
                         <div><i class="bi bi-shield-lock icon"></i> Keamanan & Password</div>
-                        <i class="bi bi-chevron-right text-muted d-lg-none"></i>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <div><i class="bi bi-bell icon"></i> Notifikasi</div>
-                        <i class="bi bi-chevron-right text-muted d-lg-none"></i>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <div><i class="bi bi-question-circle icon"></i> Bantuan & FAQ</div>
                         <i class="bi bi-chevron-right text-muted d-lg-none"></i>
                     </a>
                 </div>
@@ -222,15 +214,25 @@
             </div>
         </div>
 
-        <!-- Content Area (Only visible on PC) -->
-        <div class="col-lg-8 col-xl-9 d-none d-lg-block">
-            <div class="fade-in" style="animation-delay: 0.1s;">
-                <div class="mb-4">
-                    <h2 class="section-title">Pengaturan Akun</h2>
-                    <p class="text-muted" style="font-size: 1.05rem;">Berisi informasi akun, profil dan ubah password.</p>
+        <!-- Content Area -->
+        <div class="col-lg-8 col-xl-9 d-none d-lg-block" id="mobile-content">
+            <div class="tab-content fade-in" id="main-tabContent" style="animation-delay: 0.1s;">
+                
+                <!-- Back Button (Mobile Only) -->
+                <div class="d-lg-none mb-3">
+                    <button class="btn btn-light d-flex align-items-center btn-back-menu" style="border-radius: 12px; font-weight: 600; font-size: 0.95rem; padding: 0.6rem 1rem;">
+                        <i class="bi bi-arrow-left me-2"></i> Kembali ke Menu
+                    </button>
                 </div>
 
-                <div class="content-card">
+                <!-- Tab Akun -->
+                <div class="tab-pane fade show active main-pane" id="tab-akun" role="tabpanel">
+                    <div class="mb-4">
+                        <h2 class="section-title">Pengaturan Akun</h2>
+                        <p class="text-muted" style="font-size: 1.05rem;">Berisi informasi akun, profil dan ubah password.</p>
+                    </div>
+
+                    <div class="content-card">
                     <div style="border-bottom: 1px solid rgba(0,0,0,0.1); margin-bottom: 2rem;">
                         <span style="display: inline-block; padding-bottom: 1rem; border-bottom: 3px solid var(--accent); color: var(--accent); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;">
                             PROFIL
@@ -290,10 +292,114 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
+                </div> <!-- End content-card -->
+                </div> <!-- End tab-akun -->
+
+                <!-- Tab Transaksi -->
+                <div class="tab-pane fade main-pane" id="tab-transaksi" role="tabpanel">
+                    <div class="mb-4">
+                        <h2 class="section-title">Transaksi Saya</h2>
+                        <p class="text-muted" style="font-size: 1.05rem;">Riwayat pemesanan dan status pembayaran Anda.</p>
+                    </div>
+                    
+                    <div class="content-card" style="padding: 1.5rem;">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs mb-4" id="transaksiTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="menunggu-tab" data-bs-toggle="tab" data-bs-target="#menunggu" type="button" role="tab" style="font-weight:600; color:var(--text-dark);">Menunggu Pembayaran</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="berjalan-tab" data-bs-toggle="tab" data-bs-target="#berjalan" type="button" role="tab" style="font-weight:600; color:var(--text-dark);">Sedang Berjalan</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="selesai-tab" data-bs-toggle="tab" data-bs-target="#selesai" type="button" role="tab" style="font-weight:600; color:var(--text-dark);">Selesai</button>
+                            </li>
+                        </ul>
+
+                        @php
+                            $today = \Carbon\Carbon::today();
+                            $menunggu = isset($bookings) ? $bookings->filter(fn($b) => $b->payment_status === 'pending') : collect();
+                            $berjalan = isset($bookings) ? $bookings->filter(fn($b) => $b->payment_status === 'paid' && \Carbon\Carbon::parse($b->check_out)->startOfDay()->gte($today)) : collect();
+                            $selesai  = isset($bookings) ? $bookings->filter(fn($b) => $b->payment_status === 'paid' && \Carbon\Carbon::parse($b->check_out)->startOfDay()->lt($today)) : collect();
+                        @endphp
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <!-- Menunggu Pembayaran -->
+                            <div class="tab-pane fade show active" id="menunggu" role="tabpanel">
+                                @include('customer.partials.transaction_list', ['list' => $menunggu, 'emptyMsg' => 'Tidak ada transaksi menunggu pembayaran.'])
+                            </div>
+                            <!-- Sedang Berjalan -->
+                            <div class="tab-pane fade" id="berjalan" role="tabpanel">
+                                @include('customer.partials.transaction_list', ['list' => $berjalan, 'emptyMsg' => 'Tidak ada transaksi yang sedang berjalan.'])
+                            </div>
+                            <!-- Selesai -->
+                            <div class="tab-pane fade" id="selesai" role="tabpanel">
+                                @include('customer.partials.transaction_list', ['list' => $selesai, 'emptyMsg' => 'Belum ada transaksi selesai.'])
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- End tab-transaksi -->
+
+            </div> <!-- End tab-content utama -->
         </div>
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const triggers = document.querySelectorAll('.custom-tab-trigger');
+        const panes = document.querySelectorAll('.main-pane');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        const mobileContent = document.getElementById('mobile-content');
+        const backButtons = document.querySelectorAll('.btn-back-menu');
+
+        triggers.forEach(trigger => {
+            trigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active from all triggers
+                triggers.forEach(t => t.classList.remove('active'));
+                
+                // Add active to clicked trigger
+                this.classList.add('active');
+
+                // Hide all panes
+                panes.forEach(pane => {
+                    pane.classList.remove('active', 'show');
+                });
+
+                // Show target pane
+                const targetId = this.getAttribute('data-target');
+                const targetPane = document.querySelector(targetId);
+                if (targetPane) {
+                    targetPane.classList.add('active');
+                    setTimeout(() => {
+                        targetPane.classList.add('show');
+                    }, 10);
+                }
+
+                // Mobile Handling: Show content, hide menu
+                if (window.innerWidth < 992) {
+                    mobileSidebar.classList.add('d-none');
+                    mobileContent.classList.remove('d-none', 'd-lg-block');
+                    mobileContent.classList.add('d-block');
+                    window.scrollTo(0, 0); // Scroll to top when showing content
+                }
+            });
+        });
+
+        // Mobile Handling: Back button
+        backButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                mobileContent.classList.remove('d-block');
+                mobileContent.classList.add('d-none', 'd-lg-block');
+                mobileSidebar.classList.remove('d-none');
+            });
+        });
+    });
+</script>
 @endsection

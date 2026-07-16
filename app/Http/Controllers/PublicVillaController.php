@@ -15,6 +15,7 @@ class PublicVillaController extends Controller
 
     public function show(Villa $villa)
     {
+        $villa->load(['galleries', 'rooms', 'fasilitas']);
         $related = Villa::where('id', '!=', $villa->id)->take(3)->get();
         return view('pages.villa-detail', compact('villa', 'related'));
     }
