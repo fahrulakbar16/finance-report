@@ -3,6 +3,8 @@
 @section('title', 'Athara Villas - Booking Villa Murah Online')
 
 @section('styles')
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
     /* Hero Section */
     .hero-section {
@@ -244,24 +246,26 @@
                     </div>
 
                     <div class="search-body">
-                        <form action="#" method="GET">
+                        <form action="{{ route('villa.search') }}" method="GET" id="searchForm">
                             <div class="search-input-group">
                                 <i class="bi bi-search"></i>
-                                <input type="text" placeholder="Cari nama villa atau lokasi...">
-                                <i class="bi bi-crosshair text-muted" style="font-size:1.1rem;margin-right:0;cursor:pointer;" title="Gunakan lokasi saat ini"></i>
+                                <input type="text" name="keyword" value="{{ request('keyword') }}" placeholder="Cari nama villa atau lokasi...">
                             </div>
 
                             <div class="search-input-group">
                                 <i class="bi bi-calendar-event"></i>
-                                <input type="text" placeholder="Check-in - Check-out" value="Besok - Lusa" readonly style="cursor:pointer;">
+                                <input type="text" id="dateRange" placeholder="Check-in - Check-out" readonly style="cursor:pointer; background: transparent;">
+                                <input type="hidden" name="checkin" id="checkin_input" value="{{ request('checkin') }}">
+                                <input type="hidden" name="checkout" id="checkout_input" value="{{ request('checkout') }}">
                             </div>
 
-                            <div class="search-input-group">
+                            <!-- Input Tamu & Kamar disembunyikan sesuai permintaan -->
+                            <div class="search-input-group" style="display: none;">
                                 <i class="bi bi-people"></i>
-                                <input type="text" placeholder="Tamu & Kamar" value="2 Dewasa, 1 Kamar" readonly style="cursor:pointer;">
+                                <input type="text" placeholder="Tamu & Kamar" value="2 Dewasa, 1 Kamar" readonly>
                             </div>
 
-                            <button type="button" class="btn-search">Ayo Cari</button>
+                            <button type="submit" class="btn-search">Ayo Cari</button>
                         </form>
                     </div>
                 </div>
@@ -274,30 +278,30 @@
         <div class="container">
             <div class="section-header">
                 <h3 class="section-title">Riwayat Pencarianmu</h3>
-                <a href="#" class="clear-link">Hapus semua</a>
+                @if($recentVillas->isNotEmpty())
+                    <a href="{{ route('villa.clear_history') }}" class="clear-link">Hapus semua</a>
+                @endif
             </div>
 
             <div class="recent-scroll">
-                @php
-                    $recentVillas = \App\Models\Villa::take(3)->get();
-                @endphp
-
                 @foreach($recentVillas as $villa)
-                <div class="recent-card">
-                    <img src="{{ filter_var($villa->image, FILTER_VALIDATE_URL) ? $villa->image : asset('storage/' . $villa->image) }}" class="recent-img" alt="{{ $villa->name }}">
-                    <div class="recent-info">
-                        <h4>{{ Str::limit($villa->name, 22) }}</h4>
-                        <p>{{ Str::limit($villa->address, 25) }}</p>
+                <a href="{{ route('villa.show', $villa->id) }}" style="text-decoration: none;">
+                    <div class="recent-card">
+                        <img src="{{ filter_var($villa->image, FILTER_VALIDATE_URL) ? $villa->image : asset('storage/' . $villa->image) }}" class="recent-img" alt="{{ $villa->name }}">
+                        <div class="recent-info">
+                            <h4>{{ Str::limit($villa->name, 22) }}</h4>
+                            <p>{{ Str::limit($villa->address, 25) }}</p>
+                        </div>
                     </div>
-                </div>
+                </a>
                 @endforeach
 
-                @if($recentVillas->count() < 3)
-                <div class="recent-card">
-                    <div class="recent-img" style="background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:var(--text-muted);"><i class="bi bi-geo-alt"></i></div>
+                @if($recentVillas->isEmpty())
+                <div class="recent-card" style="opacity: 0.7;">
+                    <div class="recent-img" style="background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:var(--text-muted);"><i class="bi bi-clock-history"></i></div>
                     <div class="recent-info">
-                        <h4>Batu, Jawa Timur</h4>
-                        <p>12 - 14 Agustus • 2 Tamu</p>
+                        <h4>Belum ada riwayat</h4>
+                        <p>Mulai cari villa impianmu</p>
                     </div>
                 </div>
                 @endif
@@ -335,4 +339,42 @@
         </div>
     </div>
 
+@endsection
+
+@section('scripts')
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkinInput = document.getElementById('checkin_input');
+        const checkoutInput = document.getElementById('checkout_input');
+        
+        let defaultDates = [];
+        if (checkinInput.value) defaultDates.push(checkinInput.value);
+        if (checkoutInput.value) defaultDates.push(checkoutInput.value);
+
+        flatpickr("#dateRange", {
+            mode: "range",
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d M Y",
+            locale: "id",
+            defaultDate: defaultDates.length > 0 ? defaultDates : null,
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length === 1) {
+                    checkinInput.value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+                    checkoutInput.value = "";
+                } else if (selectedDates.length === 2) {
+                    checkinInput.value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+                    checkoutInput.value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
+                } else {
+                    checkinInput.value = "";
+                    checkoutInput.value = "";
+                }
+            }
+        });
+    });
+</script>
 @endsection

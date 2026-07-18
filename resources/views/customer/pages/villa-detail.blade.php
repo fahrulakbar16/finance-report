@@ -557,7 +557,7 @@
 
 {{-- ══ MOBILE TOP BAR ══ --}}
 <div class="vd-mobile-topbar">
-    <a href="{{ route('villa.index') }}" class="vd-back-btn"><i class="bi bi-arrow-left"></i></a>
+    <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('villa.index') }}" class="vd-back-btn"><i class="bi bi-arrow-left"></i></a>
     <div class="vd-topbar-title">{{ $villa->name }}</div>
 </div>
 
@@ -758,7 +758,7 @@
 
                     <hr class="vd-panel-divider">
 
-                    <a href="javascript:alert('Silakan pilih tanggal Check-in dan Check-out terlebih dahulu');" class="vd-btn-primary mb-2" id="vdPesanBtn">
+                    <a href="javascript:Swal.fire({icon:'warning', title:'Perhatian', text:'Silakan pilih tanggal Check-in dan Check-out terlebih dahulu', confirmButtonColor:'#C9A84C'})" class="vd-btn-primary mb-2" id="vdPesanBtn">
                         <i class="bi bi-calendar-check"></i> Pesan
                     </a>
                     <a href="{{ route('kontak') }}" class="vd-btn-outline">
@@ -785,7 +785,7 @@
             <strong>Hubungi Kami</strong>
         @endif
     </div>
-    <a href="javascript:alert('Silakan pilih tanggal Check-in dan Check-out terlebih dahulu');" class="vd-btn-primary" id="vdMobilePesanBtn">
+    <a href="javascript:Swal.fire({icon:'warning', title:'Perhatian', text:'Silakan pilih tanggal Check-in dan Check-out terlebih dahulu', confirmButtonColor:'#C9A84C'})" class="vd-btn-primary" id="vdMobilePesanBtn">
         <i class="bi bi-calendar-check"></i> Pesan
     </a>
 </div>
@@ -846,76 +846,109 @@
     const formatRp = (num) => 'Rp ' + new Intl.NumberFormat('id-ID').format(num);
 
     if (basePrice > 0 && document.getElementById('vdDateRange')) {
-        flatpickr("#vdDateRange", {
+        let defaultDates = [];
+        @if(request('checkin')) defaultDates.push("{{ request('checkin') }}"); @endif
+        @if(request('checkout')) defaultDates.push("{{ request('checkout') }}"); @endif
+
+        const fp = flatpickr("#vdDateRange", {
             mode: "range",
             minDate: "today",
             locale: "id",
             showMonths: window.innerWidth > 768 ? 2 : 1,
             dateFormat: "Y-m-d",
-            onChange: function(selectedDates) {
-                const checkinVal = document.getElementById('vdCheckinVal');
-                const checkoutVal = document.getElementById('vdCheckoutVal');
-                
+            defaultDate: defaultDates.length > 0 ? defaultDates : null,
+            onReady: function(selectedDates) {
                 if (selectedDates.length > 0) {
-                    checkinVal.textContent = flatpickr.formatDate(selectedDates[0], "d M Y");
-                    checkinVal.classList.add('selected');
-                } else {
-                    checkinVal.textContent = "Pilih tanggal";
-                    checkinVal.classList.remove('selected');
+                    updateBookingInfo(selectedDates);
                 }
-
-                if (selectedDates.length === 2) {
-                    checkoutVal.textContent = flatpickr.formatDate(selectedDates[1], "d M Y");
-                    checkoutVal.classList.add('selected');
-
-                    // Calculate nights
-                    const diffTime = Math.abs(selectedDates[1] - selectedDates[0]);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (diffDays > 0) {
-                        const total = diffDays * basePrice;
-                        document.getElementById('vdBookingTotal').style.display = 'block';
-                        document.getElementById('vdNightsText').textContent = diffDays + ' malam x ' + formatRp(basePrice);
-                        document.getElementById('vdNightsPrice').textContent = formatRp(total);
-                        document.getElementById('vdTotalPrice').textContent = formatRp(total);
-                        
-                        // Update message for checkout link
-                        const waBtn = document.getElementById('vdPesanBtn');
-                        const waMobileBtn = document.getElementById('vdMobilePesanBtn');
-                        
-                        const checkinStr = flatpickr.formatDate(selectedDates[0], "Y-m-d");
-                        const checkoutStr = flatpickr.formatDate(selectedDates[1], "Y-m-d");
-                        
-                        const url = `{{ route('checkout.index') }}?villa_id={{ $villa->id }}&checkin=${checkinStr}&checkout=${checkoutStr}`;
-                        
-                        if (waBtn) waBtn.href = url;
-                        if (waMobileBtn) waMobileBtn.href = url;
-
-                        // Update mobile sticky bar price text
-                        const mobilePriceText = document.getElementById('vdMobilePriceText');
-                        if (mobilePriceText) {
-                            mobilePriceText.innerHTML = `Total Pembayaran<br><strong>${formatRp(total)}</strong> <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-muted);">/ ${diffDays} malam</span>`;
-                        }
-                    }
-                } else {
-                    checkoutVal.textContent = "Pilih tanggal";
-                    checkoutVal.classList.remove('selected');
-                    document.getElementById('vdBookingTotal').style.display = 'none';
-                    
-                    // Reset link
-                    const waBtn = document.getElementById('vdPesanBtn');
-                    const waMobileBtn = document.getElementById('vdMobilePesanBtn');
-                    if (waBtn) waBtn.href = "javascript:alert('Silakan pilih tanggal Check-in dan Check-out terlebih dahulu');";
-                    if (waMobileBtn) waMobileBtn.href = "javascript:alert('Silakan pilih tanggal Check-in dan Check-out terlebih dahulu');";
-
-                    // Reset mobile sticky bar price text
-                    const mobilePriceText = document.getElementById('vdMobilePriceText');
-                    if (mobilePriceText) {
-                        mobilePriceText.innerHTML = `Mulai dari<br><strong>${formatRp(basePrice)} <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-muted);">/ malam</span></strong>`;
-                    }
-                }
+            },
+            onChange: function(selectedDates) {
+                updateBookingInfo(selectedDates);
             }
         });
+
+        function updateBookingInfo(selectedDates) {
+            const checkinVal = document.getElementById('vdCheckinVal');
+            const checkoutVal = document.getElementById('vdCheckoutVal');
+            
+            if (selectedDates && selectedDates.length > 0) {
+                checkinVal.textContent = flatpickr.formatDate(selectedDates[0], "d M Y");
+                checkinVal.classList.add('selected');
+            } else {
+                checkinVal.textContent = "Pilih tanggal";
+                checkinVal.classList.remove('selected');
+            }
+
+            if (selectedDates && selectedDates.length === 2) {
+                checkoutVal.textContent = flatpickr.formatDate(selectedDates[1], "d M Y");
+                checkoutVal.classList.add('selected');
+
+                // Calculate nights
+                const diffTime = Math.abs(selectedDates[1] - selectedDates[0]);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays > 0) {
+                    const total = diffDays * basePrice;
+                    document.getElementById('vdBookingTotal').style.display = 'block';
+                    document.getElementById('vdNightsText').textContent = diffDays + ' malam x ' + formatRp(basePrice);
+                    document.getElementById('vdNightsPrice').textContent = formatRp(total);
+                    document.getElementById('vdTotalPrice').textContent = formatRp(total);
+                    
+                    // Update message for checkout link
+                    const waBtn = document.getElementById('vdPesanBtn');
+                    const waMobileBtn = document.getElementById('vdMobilePesanBtn');
+                    
+                    const checkinStr = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+                    const checkoutStr = flatpickr.formatDate(selectedDates[1], "Y-m-d");
+                    
+                    const url = `{{ route('checkout.index') }}?villa_id={{ $villa->id }}&checkin=${checkinStr}&checkout=${checkoutStr}`;
+                    
+                    @auth
+                        if (waBtn) waBtn.href = url;
+                        if (waMobileBtn) waMobileBtn.href = url;
+                    @else
+                        const loginAlert = `javascript:Swal.fire({
+                            icon:'info', 
+                            title:'Harap Login', 
+                            text:'Anda harus login terlebih dahulu untuk melakukan pemesanan.', 
+                            showCancelButton: true,
+                            confirmButtonText:'Login Sekarang',
+                            cancelButtonText:'Batal',
+                            confirmButtonColor:'#C9A84C'
+                        }).then((result) => { 
+                            if(result.isConfirmed) { 
+                                window.location.href = '${url}'; 
+                            } 
+                        })`;
+                        if (waBtn) waBtn.href = loginAlert;
+                        if (waMobileBtn) waMobileBtn.href = loginAlert;
+                    @endauth
+
+                    // Update mobile sticky bar price text
+                    const mobilePriceText = document.getElementById('vdMobilePriceText');
+                    if (mobilePriceText) {
+                        mobilePriceText.innerHTML = `Total Pembayaran<br><strong>${formatRp(total)}</strong> <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-muted);">/ ${diffDays} malam</span>`;
+                    }
+                }
+            } else {
+                if (checkoutVal) {
+                    checkoutVal.textContent = "Pilih tanggal";
+                    checkoutVal.classList.remove('selected');
+                }
+                document.getElementById('vdBookingTotal').style.display = 'none';
+                
+                const emptyUrl = `javascript:Swal.fire({icon:'warning', title:'Perhatian', text:'Silakan pilih tanggal Check-in dan Check-out terlebih dahulu', confirmButtonColor:'#C9A84C'})`;
+                const waBtn = document.getElementById('vdPesanBtn');
+                const waMobileBtn = document.getElementById('vdMobilePesanBtn');
+                if (waBtn) waBtn.href = emptyUrl;
+                if (waMobileBtn) waMobileBtn.href = emptyUrl;
+
+                const mobilePriceText = document.getElementById('vdMobilePriceText');
+                if (mobilePriceText) {
+                    mobilePriceText.innerHTML = `Mulai dari<br><strong>${formatRp(basePrice)} <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-muted);">/ malam</span></strong>`;
+                }
+            }
+        }
 
         // Bind clicks
         document.getElementById('vdCheckinBtn').addEventListener('click', () => document.getElementById('vdDateRange')._flatpickr.open());

@@ -228,11 +228,43 @@
         .f-policy { display: flex; gap: 1.5rem; }
         .f-policy a { font-size: 0.78rem; color: rgba(255,255,255,0.28); text-decoration: none; transition: color 0.3s; }
         .f-policy a:hover { color: var(--accent); }
+
+        /* ── Preloader ── */
+        #preloader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-main);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @yield('styles')
 </head>
 <body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
 
 {{-- ══ NAVBAR ══ --}}
 <nav class="site-nav">
@@ -358,6 +390,56 @@
         entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
     }, { threshold: 0.1 });
     document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+    // Preloader
+    window.addEventListener('load', function() {
+        const preloader = document.getElementById('preloader');
+        preloader.style.opacity = '0';
+        setTimeout(() => {
+            preloader.style.display = 'none';
+        }, 500);
+    });
+
+    // SweetAlert2 Toast configuration
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    @if(session('success'))
+        Toast.fire({
+            icon: 'success',
+            title: "{{ session('success') }}"
+        });
+    @endif
+
+    @if(session('error'))
+        Toast.fire({
+            icon: 'error',
+            title: "{{ session('error') }}"
+        });
+    @endif
+    
+    @if(session('warning'))
+        Toast.fire({
+            icon: 'warning',
+            title: "{{ session('warning') }}"
+        });
+    @endif
+
+    @if($errors->any())
+        Toast.fire({
+            icon: 'error',
+            title: 'Terdapat kesalahan pada input Anda!'
+        });
+    @endif
 </script>
 
 @yield('scripts')

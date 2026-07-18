@@ -152,18 +152,20 @@ Route::get('/fasilitas', fn() => view('customer.pages.fasilitas'))->name('fasili
 Route::get('/testimoni', fn() => view('customer.pages.testimoni'))->name('testimoni');
 Route::get('/kontak',    fn() => view('customer.pages.kontak'))->name('kontak');
 
+Route::get('/villa/clear-history', [PublicVillaController::class, 'clearHistory'])->name('villa.clear_history');
+Route::get('/villa/search', [PublicVillaController::class, 'search'])->name('villa.search');
 Route::get('/villa', [PublicVillaController::class, 'index'])->name('villa.index');
 Route::get('/villa/{villa}', [PublicVillaController::class, 'show'])->name('villa.show');
 
 Route::get('/booking', function () use ($villaList) {
     return view('customer.pages.booking', ['villas' => $villaList, 'selectedSlug' => null]);
-})->name('booking.index');
+})->middleware(['auth', 'role:customer'])->name('booking.index');
 
 Route::get('/booking/{slug}', function ($slug) use ($villaList) {
     $villa = collect($villaList)->firstWhere('slug', $slug);
     abort_if(!$villa, 404);
     return view('customer.pages.booking', ['villas' => $villaList, 'selectedSlug' => $slug]);
-})->name('booking.show');
+})->middleware(['auth', 'role:customer'])->name('booking.show');
 
 // ── Auth ──
 Auth::routes();
@@ -173,7 +175,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
     ->name('home');
 
 // ── Checkout & Payment ──
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/voucher', [App\Http\Controllers\CheckoutController::class, 'applyVoucher'])->name('checkout.voucher');
     Route::post('/checkout/process', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process');

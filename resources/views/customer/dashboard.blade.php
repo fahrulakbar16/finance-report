@@ -119,17 +119,22 @@
 @endsection
 
 @section('content')
-<div class="container py-4" style="max-width: 600px; margin: 0 auto;">
+<div class="container py-4 py-md-5" style="max-width: 1000px; margin: 0 auto;">
     <div class="d-flex justify-content-between align-items-center mb-4 d-md-none">
         <h1 class="header-title" style="font-size:1.5rem;font-weight:700;margin:0;color:var(--primary);">Athara Villas</h1>
     </div>
 
-    <h2 class="greeting">Hi, {{ Auth::user()->name }} 👋</h2>
-    <p class="sub-greeting">Mau liburan kemana hari ini?</p>
-
-    <div class="search-box">
-        <i class="bi bi-search"></i>
-        <input type="text" placeholder="Cari villa di Batu, Malang...">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2 class="greeting">Hi, {{ Auth::user()->name }} 👋</h2>
+            <p class="sub-greeting">Mau liburan kemana hari ini?</p>
+        </div>
+        <div class="col-md-6 d-flex align-items-center">
+            <div class="search-box w-100 mb-0">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Cari villa di Batu, Malang...">
+            </div>
+        </div>
     </div>
 
     <div class="h-scroll">
@@ -154,18 +159,22 @@
         $villas = \App\Models\Villa::take(3)->get();
     @endphp
 
+    <div class="row g-4">
     @foreach($villas as $villa)
-    <div class="villa-card">
-        <img src="{{ filter_var($villa->image, FILTER_VALIDATE_URL) ? $villa->image : asset('storage/' . $villa->image) }}" class="villa-img" alt="{{ $villa->name }}">
-        <div class="villa-info">
-            <h3 class="villa-title">{{ $villa->name }}</h3>
-            <div class="villa-loc"><i class="bi bi-geo-alt-fill text-warning"></i> {{ Str::limit($villa->address, 30) }}</div>
-            <div class="d-flex justify-content-between align-items-center mt-2">
-                <span class="villa-price">Rp {{ number_format($villa->price, 0, ',', '.') }}<span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">/malam</span></span>
-                <a href="{{ route('villa.show', $villa->id) }}" class="btn btn-sm btn-dark" style="border-radius:8px;font-size:0.8rem;">Detail</a>
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="villa-card h-100 d-flex flex-column mb-0">
+            <img src="{{ filter_var($villa->image, FILTER_VALIDATE_URL) ? $villa->image : asset('storage/' . $villa->image) }}" class="villa-img" alt="{{ $villa->name }}">
+            <div class="villa-info d-flex flex-column flex-grow-1">
+                <h3 class="villa-title">{{ $villa->name }}</h3>
+                <div class="villa-loc"><i class="bi bi-geo-alt-fill text-warning"></i> {{ Str::limit($villa->address, 30) }}</div>
+                <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+                    <span class="villa-price">Rp {{ number_format($villa->price, 0, ',', '.') }}<span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">/malam</span></span>
+                    <a href="{{ route('villa.show', $villa->id) }}" class="btn btn-sm btn-dark" style="border-radius:8px;font-size:0.8rem;">Detail</a>
+                </div>
             </div>
         </div>
     </div>
     @endforeach
+    </div>
 </div>
 @endsection
