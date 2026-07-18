@@ -29,7 +29,7 @@ class CheckoutController extends Controller
         $basePrice = $villa->price;
         $totalPrice = $basePrice * $nights;
 
-        return view('pages.checkout', compact('villa', 'checkIn', 'checkOut', 'nights', 'basePrice', 'totalPrice'));
+        return view('customer.pages.checkout', compact('villa', 'checkIn', 'checkOut', 'nights', 'basePrice', 'totalPrice'));
     }
 
     // POST /checkout/voucher

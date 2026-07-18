@@ -18,14 +18,14 @@ class VillaController extends Controller
     {
         $villas = Villa::with('pemilik')->paginate(10);
         $pemiliks = User::role('pemilik')->get(); // Only show users with 'pemilik' role
-        return view('villas.index', compact('villas', 'pemiliks'));
+        return view('admin.villas.index', compact('villas', 'pemiliks'));
     }
 
     public function create()
     {
         $pemiliks = User::role('pemilik')->get();
         $fasilitas = Fasilitas::all();
-        return view('villas.create', compact('pemiliks', 'fasilitas'));
+        return view('admin.villas.create', compact('pemiliks', 'fasilitas'));
     }
 
     public function store(StoreVillaRequest $request)
@@ -41,7 +41,7 @@ class VillaController extends Controller
         $villa->load(['rooms', 'fasilitas']);
         $pemiliks = User::role('pemilik')->get();
         $fasilitas = Fasilitas::all();
-        return view('villas.edit', compact('villa', 'pemiliks', 'fasilitas'));
+        return view('admin.villas.edit', compact('villa', 'pemiliks', 'fasilitas'));
     }
 
     public function update(UpdateVillaRequest $request, Villa $villa)
@@ -72,7 +72,7 @@ class VillaController extends Controller
         $totalExpense = (clone $statsQuery)->where('type', 'expense')->sum('amount');
         $balance = $totalIncome - $totalExpense;
 
-        return view('villas.show', compact('villa', 'transactions', 'totalIncome', 'totalExpense', 'balance'));
+        return view('admin.villas.show', compact('villa', 'transactions', 'totalIncome', 'totalExpense', 'balance'));
     }
 
     public function destroy(Villa $villa)

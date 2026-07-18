@@ -33,7 +33,7 @@ class VillaTransactionsSheet implements FromView, WithTitle, ShouldAutoSize, Wit
             $query->whereDate('date', '<=', $this->endDate);
         }
 
-        return view('exports.villa-excel', [
+        return view('admin.exports.villa-excel', [
             'transactions' => $query->get(),
             'villa' => $this->villa,
             'startDate' => $this->startDate,

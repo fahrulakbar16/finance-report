@@ -86,7 +86,7 @@ class TransactionController extends Controller
             }
         }
 
-        return view('transactions.index', compact(
+        return view('admin.transactions.index', compact(
             'incomeTransactions',
             'expenseTransactions',
             'ownerTransactions',

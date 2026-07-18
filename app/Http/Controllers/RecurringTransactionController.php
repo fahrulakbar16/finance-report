@@ -18,7 +18,7 @@ class RecurringTransactionController extends Controller
 
         $recurringTransactions = $query->orderBy('start_date', 'desc')->paginate(10);
 
-        return view('recurring_transactions.index', compact('recurringTransactions'));
+        return view('admin.recurring_transactions.index', compact('recurringTransactions'));
     }
 
     public function destroy(RecurringTransaction $recurringTransaction)

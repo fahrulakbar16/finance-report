@@ -36,7 +36,7 @@ class AllVillasSummarySheet implements FromView, WithTitle, ShouldAutoSize, With
             $query->where('villa_id', $this->villaId);
         }
 
-        return view('exports.summary-excel', [
+        return view('admin.exports.summary-excel', [
             'transactions' => $query->get(),
             'startDate' => $this->startDate,
             'endDate' => $this->endDate

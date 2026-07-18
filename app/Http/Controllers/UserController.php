@@ -20,7 +20,7 @@ class UserController extends Controller
     {
         $users = User::with('roles')->paginate(10);
         $roles = Role::all();
-        return view('users.index', compact('users', 'roles'));
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     /**
@@ -29,7 +29,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('users.create', compact('roles'));
+        return view('admin.users.create', compact('roles'));
     }
 
     /**

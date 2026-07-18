@@ -147,22 +147,22 @@ $villaList = [
 Route::get('/', fn() => view('welcome'))->name('landing');
 
 // ── Public pages ──
-Route::get('/tentang',   fn() => view('pages.tentang'))->name('tentang');
-Route::get('/fasilitas', fn() => view('pages.fasilitas'))->name('fasilitas');
-Route::get('/testimoni', fn() => view('pages.testimoni'))->name('testimoni');
-Route::get('/kontak',    fn() => view('pages.kontak'))->name('kontak');
+Route::get('/tentang',   fn() => view('customer.pages.tentang'))->name('tentang');
+Route::get('/fasilitas', fn() => view('customer.pages.fasilitas'))->name('fasilitas');
+Route::get('/testimoni', fn() => view('customer.pages.testimoni'))->name('testimoni');
+Route::get('/kontak',    fn() => view('customer.pages.kontak'))->name('kontak');
 
 Route::get('/villa', [PublicVillaController::class, 'index'])->name('villa.index');
 Route::get('/villa/{villa}', [PublicVillaController::class, 'show'])->name('villa.show');
 
 Route::get('/booking', function () use ($villaList) {
-    return view('pages.booking', ['villas' => $villaList, 'selectedSlug' => null]);
+    return view('customer.pages.booking', ['villas' => $villaList, 'selectedSlug' => null]);
 })->name('booking.index');
 
 Route::get('/booking/{slug}', function ($slug) use ($villaList) {
     $villa = collect($villaList)->firstWhere('slug', $slug);
     abort_if(!$villa, 404);
-    return view('pages.booking', ['villas' => $villaList, 'selectedSlug' => $slug]);
+    return view('customer.pages.booking', ['villas' => $villaList, 'selectedSlug' => $slug]);
 })->name('booking.show');
 
 // ── Auth ──

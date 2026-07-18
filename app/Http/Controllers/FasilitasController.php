@@ -10,12 +10,12 @@ class FasilitasController extends Controller
     public function index()
     {
         $fasilitas = Fasilitas::latest()->paginate(10);
-        return view('fasilitas.index', compact('fasilitas'));
+        return view('admin.fasilitas.index', compact('fasilitas'));
     }
 
     public function create()
     {
-        return view('fasilitas.create');
+        return view('admin.fasilitas.create');
     }
 
     public function store(Request $request)
@@ -33,7 +33,7 @@ class FasilitasController extends Controller
 
     public function edit(Fasilitas $fasilita)
     {
-        return view('fasilitas.edit', compact('fasilita'));
+        return view('admin.fasilitas.edit', compact('fasilita'));
     }
 
     public function update(Request $request, Fasilitas $fasilita)

@@ -117,7 +117,7 @@ class HomeController extends Controller
             $bagianPemilikMonth += ($villaProfit * ($villa->persenan_pemilik / 100)) - $villaTanggunganExpense;
         }
 
-        return view('home', compact(
+        return view('admin.home', compact(
             'totalIncomeMonth',
             'totalExpenseMonth',
             'bagianPengelolaMonth',

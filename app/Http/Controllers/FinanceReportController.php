@@ -17,7 +17,7 @@ class FinanceReportController extends Controller
         $totalExpense = FinanceReport::where('type', 'expense')->sum('amount');
         $balance = $totalIncome - $totalExpense;
 
-        return view('finance.index', compact('reports', 'totalIncome', 'totalExpense', 'balance'));
+        return view('admin.finance.index', compact('reports', 'totalIncome', 'totalExpense', 'balance'));
     }
 
     /**
