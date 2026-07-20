@@ -11,12 +11,12 @@
     
     <style>
         :root {
-            --primary: #0f172a;
-            --accent: #c9a84c;
-            --bg-body: #f8fafc;
+            --primary: #1B3D2F;
+            --accent: #C9A84C;
+            --bg-body: #FAFAF8;
             --surface: #ffffff;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
+            --text-dark: #1A1A1A;
+            --text-muted: #6B7280;
         }
 
         body {

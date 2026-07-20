@@ -51,7 +51,7 @@
         min-width: 260px;
         height: 140px;
         border-radius: 16px;
-        background: linear-gradient(135deg, var(--primary), #1e293b);
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
         color: white;
         padding: 1.2rem;
         position: relative;

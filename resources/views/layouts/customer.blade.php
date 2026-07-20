@@ -11,13 +11,13 @@
     
     <style>
         :root {
-            --primary: #0f172a; /* Deep slate */
-            --accent: #c9a84c; /* Gold */
+            --primary: #1B3D2F; /* Deep green (landing) */
+            --accent: #C9A84C; /* Gold */
             --accent-light: #fef9e8;
-            --bg-body: #f8fafc;
+            --bg-body: #FAFAF8;
             --surface: #ffffff;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
+            --text-dark: #1A1A1A;
+            --text-muted: #6B7280;
             --nav-height: 65px;
         }
 

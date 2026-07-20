@@ -19,20 +19,21 @@
 
     <style>
         :root {
-            --fi-primary: #d97706; /* Amber 600 */
-            --fi-primary-hover: #b45309; /* Amber 700 */
-            --fi-bg: #f8fafc;
+            --fi-primary: #C9A84C; /* Gold accent (landing) */
+            --fi-primary-hover: #B8933E; /* Darker gold */
+            --fi-brand: #1B3D2F; /* Deep green (landing primary) */
+            --fi-bg: #FAFAF8;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #FAFAF8 0%, #F4F0E8 100%);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0;
-            color: #0f172a;
+            color: #1A1A1A;
         }
 
         .login-container {
@@ -65,7 +66,7 @@
             font-size: 1.75rem;
             font-weight: 800;
             letter-spacing: -0.025em;
-            color: #0f172a;
+            color: var(--fi-brand);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -103,14 +104,14 @@
 
         .form-control:focus {
             outline: none;
-            box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1);
+            box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.15);
             border-color: var(--fi-primary);
             background-color: #fff;
         }
 
         .btn-login {
             background-color: var(--fi-primary);
-            color: white;
+            color: var(--fi-brand);
             height: 3.25rem;
             border: none;
             border-radius: 0.75rem;
@@ -119,13 +120,14 @@
             width: 100%;
             margin-top: 1rem;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(217, 119, 6, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(201, 168, 76, 0.25);
         }
 
         .btn-login:hover {
             background-color: var(--fi-primary-hover);
+            color: #fff;
             transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(217, 119, 6, 0.3);
+            box-shadow: 0 10px 15px -3px rgba(201, 168, 76, 0.35);
         }
 
         .btn-login:active {

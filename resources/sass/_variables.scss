@@ -1,7 +1,12 @@
 // Body
-$body-bg: #f8fafc;
+$body-bg: #FAFAF8;
 
 // Typography
 $font-family-sans-serif: 'Nunito', sans-serif;
 $font-size-base: 0.9rem;
 $line-height-base: 1.6;
+
+// Brand theme (matches landing page palette)
+$primary: #1B3D2F; // deep green
+$info:    #2D6148; // primary-light green
+$warning: #C9A84C; // gold accent
