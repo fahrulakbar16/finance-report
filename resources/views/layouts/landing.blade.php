@@ -279,12 +279,12 @@
             <div class="nav-collapse" id="navCollapse">
                 <ul class="nav-links">
                     <li><a href="{{ route('tentang') }}"   class="{{ request()->routeIs('tentang')    ? 'active' : '' }}">Tentang</a></li>
-                    <li><a href="{{ route('villa.index') }}" class="{{ request()->routeIs('villa.*')    ? 'active' : '' }}">Villa</a></li>
+                    <li><a href="{{ route('villa.collection') }}" class="{{ request()->routeIs('villa.collection') ? 'active' : '' }}">Villa</a></li>
                     <li><a href="{{ route('fasilitas') }}" class="{{ request()->routeIs('fasilitas')  ? 'active' : '' }}">Fasilitas</a></li>
                     <li><a href="{{ route('testimoni') }}" class="{{ request()->routeIs('testimoni')  ? 'active' : '' }}">Testimoni</a></li>
                     <li><a href="{{ route('kontak') }}"    class="{{ request()->routeIs('kontak')     ? 'active' : '' }}">Kontak</a></li>
                 </ul>
-                <a href="{{ route('booking.index') }}" class="btn-nav-login">
+                <a href="{{ route('villa.index') }}" class="btn-nav-login">
                     <i class="bi bi-calendar-check-fill"></i> Reservasi
                 </a>
                 <a href="{{ route('customer.login') }}" class="btn-nav-login" style="background:transparent;border:1.5px solid #e5e7eb;color:var(--text-muted);font-size:0.8rem;padding:0.45rem 1rem;">
@@ -349,12 +349,11 @@
             <div class="col-lg-2 col-md-6 col-6">
                 <div class="f-heading">Villa</div>
                 <ul class="f-nav">
-                    <li><a href="{{ route('villa.show', 'villa-arjuna') }}">Villa Arjuna</a></li>
-                    <li><a href="{{ route('villa.show', 'villa-dewi') }}">Villa Dewi</a></li>
-                    <li><a href="{{ route('villa.show', 'villa-surya') }}">Villa Surya</a></li>
-                    <li><a href="{{ route('villa.show', 'villa-bintang') }}">Villa Bintang</a></li>
-                    <li><a href="{{ route('villa.show', 'villa-kenanga') }}">Villa Kenanga</a></li>
-                    <li><a href="{{ route('villa.show', 'villa-pandan') }}">Villa Pandan</a></li>
+                    @forelse($footerVillas as $fv)
+                    <li><a href="{{ route('villa.show', $fv->id) }}">{{ $fv->name }}</a></li>
+                    @empty
+                    <li><span class="text-muted">Belum ada villa</span></li>
+                    @endforelse
                 </ul>
             </div>
             <div class="col-lg-4 col-md-6">

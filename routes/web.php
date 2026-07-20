@@ -18,10 +18,13 @@ Route::get('/fasilitas', fn() => view('customer.pages.fasilitas'))->name('fasili
 Route::get('/testimoni', fn() => view('customer.pages.testimoni'))->name('testimoni');
 Route::get('/kontak',    fn() => view('customer.pages.kontak'))->name('kontak');
 
-Route::get('/villa/clear-history', [PublicVillaController::class, 'clearHistory'])->name('villa.clear_history');
-Route::get('/villa/search', [PublicVillaController::class, 'search'])->name('villa.search');
-Route::get('/villa', [PublicVillaController::class, 'index'])->name('villa.index');
-Route::get('/villa/{villa}', [PublicVillaController::class, 'show'])->name('villa.show');
+Route::get('/reservasi/clear-history', [PublicVillaController::class, 'clearHistory'])->name('villa.clear_history');
+Route::get('/reservasi/search', [PublicVillaController::class, 'search'])->name('villa.search');
+Route::get('/reservasi', [PublicVillaController::class, 'index'])->name('villa.index');
+Route::get('/reservasi/{villa}', [PublicVillaController::class, 'show'])->name('villa.show');
+
+// ── Villa collection (nav "Villa" — original simple listing layout) ──
+Route::get('/villa', [PublicVillaController::class, 'collection'])->name('villa.collection');
 
 Route::get('/booking', function () {
     return view('customer.pages.booking', ['selectedSlug' => null]);

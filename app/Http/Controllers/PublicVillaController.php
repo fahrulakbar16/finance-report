@@ -23,6 +23,13 @@ class PublicVillaController extends Controller
         return view('customer.pages.villa', compact('villas', 'recentVillas'));
     }
 
+    public function collection()
+    {
+        $villas = Villa::with('rooms')->get();
+
+        return view('customer.pages.villa-koleksi', compact('villas'));
+    }
+
     public function show(Villa $villa)
     {
         $villa->load(['galleries', 'rooms', 'fasilitas']);

@@ -634,12 +634,12 @@
                 <div class="nav-collapse" id="navCollapse">
                     <ul class="nav-links">
                         <li><a href="{{ route('tentang') }}">Tentang</a></li>
-                        <li><a href="{{ route('villa.index') }}">Villa</a></li>
+                        <li><a href="{{ route('villa.collection') }}">Villa</a></li>
                         <li><a href="{{ route('fasilitas') }}">Fasilitas</a></li>
                         <li><a href="{{ route('testimoni') }}">Testimoni</a></li>
                         <li><a href="{{ route('kontak') }}">Kontak</a></li>
                     </ul>
-                    <a href="{{ route('booking.index') }}" class="btn-nav-login">
+                    <a href="{{ route('villa.index') }}" class="btn-nav-login">
                         <i class="bi bi-calendar-check-fill" style="font-size:0.85rem;"></i> Reservasi
                     </a>
                 </div>
@@ -757,72 +757,36 @@
                 <p class="sec-desc">Temukan villa yang sempurna untuk momen istimewa bersama orang-orang terkasih.</p>
             </div>
             <div class="row g-4">
-                <div class="col-md-6 col-lg-4 d-flex fade-up delay-1">
+                @forelse($homeVillas as $hv)
+                @php
+                    $hvThumb = $hv->image
+                        ? (filter_var($hv->image, FILTER_VALIDATE_URL) ? $hv->image : asset('storage/' . $hv->image))
+                        : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop';
+                @endphp
+                <div class="col-md-6 col-lg-4 d-flex fade-up delay-{{ $loop->iteration }}">
                     <div class="villa-card w-100">
                         <div class="villa-img-wrap">
-                            <img
-                                src="https://images.unsplash.com/photo-1540541338537-1220059af400?q=80&w=800&auto=format&fit=crop"
-                                alt="Villa Arjuna"
-                                loading="lazy"
-                            >
+                            <img src="{{ $hvThumb }}" alt="{{ $hv->name }}" loading="lazy">
                             <span class="villa-pill">Tersedia</span>
                         </div>
                         <div class="villa-body">
-                            <h3 class="villa-name">Villa Arjuna</h3>
+                            <h3 class="villa-name">{{ $hv->name }}</h3>
                             <div class="villa-meta">
-                                <span><i class="bi bi-people-fill"></i> 8 Orang</span>
-                                <span><i class="bi bi-door-closed-fill"></i> 4 Kamar</span>
-                                <span><i class="bi bi-droplet-fill"></i> Private Pool</span>
+                                <span><i class="bi bi-door-closed-fill"></i> {{ $hv->rooms->count() }} Ruangan</span>
+                                @if($hv->address)
+                                <span><i class="bi bi-geo-alt-fill"></i> {{ Str::limit($hv->address, 24) }}</span>
+                                @endif
                             </div>
-                            <p class="villa-desc">Villa luas dengan private pool yang menenangkan, ideal untuk keluarga besar atau gathering bersama teman.</p>
-                            <a href="{{ route('villa.show', 'villa-arjuna') }}" class="btn-underline">Lihat Detail <i class="bi bi-arrow-right"></i></a>
+                            <p class="villa-desc">{{ Str::limit($hv->description, 110) }}</p>
+                            <a href="{{ route('villa.show', $hv->id) }}" class="btn-underline">Lihat Detail <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-4 d-flex fade-up delay-2">
-                    <div class="villa-card w-100">
-                        <div class="villa-img-wrap">
-                            <img
-                                src="https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=800&auto=format&fit=crop"
-                                alt="Villa Dewi"
-                                loading="lazy"
-                            >
-                            <span class="villa-pill">Tersedia</span>
-                        </div>
-                        <div class="villa-body">
-                            <h3 class="villa-name">Villa Dewi</h3>
-                            <div class="villa-meta">
-                                <span><i class="bi bi-people-fill"></i> 6 Orang</span>
-                                <span><i class="bi bi-door-closed-fill"></i> 3 Kamar</span>
-                                <span><i class="bi bi-droplet-fill"></i> Private Pool</span>
-                            </div>
-                            <p class="villa-desc">Nuansa tropis yang hangat dengan dekorasi alami, sempurna untuk bulan madu atau perayaan anniversary.</p>
-                            <a href="{{ route('villa.show', 'villa-dewi') }}" class="btn-underline">Lihat Detail <i class="bi bi-arrow-right"></i></a>
-                        </div>
-                    </div>
+                @empty
+                <div class="col-12 text-center">
+                    <p class="text-muted">Belum ada villa yang tersedia saat ini.</p>
                 </div>
-                <div class="col-md-6 col-lg-4 d-flex fade-up delay-3">
-                    <div class="villa-card w-100">
-                        <div class="villa-img-wrap">
-                            <img
-                                src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=800&auto=format&fit=crop"
-                                alt="Villa Surya"
-                                loading="lazy"
-                            >
-                            <span class="villa-pill">Tersedia</span>
-                        </div>
-                        <div class="villa-body">
-                            <h3 class="villa-name">Villa Surya</h3>
-                            <div class="villa-meta">
-                                <span><i class="bi bi-people-fill"></i> 12 Orang</span>
-                                <span><i class="bi bi-door-closed-fill"></i> 5 Kamar</span>
-                                <span><i class="bi bi-droplet-fill"></i> Private Pool</span>
-                            </div>
-                            <p class="villa-desc">Villa terbesar kami dengan panorama menakjubkan, ideal untuk corporate gathering atau reuni besar.</p>
-                            <a href="{{ route('villa.show', 'villa-surya') }}" class="btn-underline">Lihat Detail <i class="bi bi-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -997,9 +961,11 @@
                 <div class="col-lg-2 col-md-6 col-6">
                     <div class="footer-heading">Villa</div>
                     <ul class="footer-nav">
-                        <li><a href="{{ route('villa.show', 'villa-arjuna') }}">Villa Arjuna</a></li>
-                        <li><a href="{{ route('villa.show', 'villa-dewi') }}">Villa Dewi</a></li>
-                        <li><a href="{{ route('villa.show', 'villa-surya') }}">Villa Surya</a></li>
+                        @forelse($footerVillas as $fv)
+                        <li><a href="{{ route('villa.show', $fv->id) }}">{{ $fv->name }}</a></li>
+                        @empty
+                        <li><span class="text-muted">Belum ada villa</span></li>
+                        @endforelse
                     </ul>
                 </div>
                 <div class="col-lg-4 col-md-6">

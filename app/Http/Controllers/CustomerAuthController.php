@@ -24,7 +24,7 @@ class CustomerAuthController extends Controller
 
             // Check if user is a customer
             if (Auth::user()->hasRole('customer')) {
-                return redirect()->intended('/villa');
+                return redirect()->intended('/reservasi');
             }
 
             // If not customer, maybe redirect to main home
@@ -42,6 +42,6 @@ class CustomerAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/villa');
+        return redirect('/reservasi');
     }
 }
