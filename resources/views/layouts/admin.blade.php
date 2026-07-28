@@ -641,12 +641,12 @@
             </h6>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('villas.*') || request()->routeIs('fasilitas.*') ? '' : 'collapsed' }} {{ request()->routeIs('villas.*') || request()->routeIs('fasilitas.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#villaMenu" role="button" aria-expanded="{{ request()->routeIs('villas.*') || request()->routeIs('fasilitas.*') ? 'true' : 'false' }}" aria-controls="villaMenu">
+            <a class="nav-link {{ request()->routeIs('villas.*') || request()->routeIs('fasilitas.*') || request()->is('vouchers*') || request()->routeIs('vouchers.*') ? '' : 'collapsed' }} {{ request()->routeIs('villas.*') || request()->routeIs('fasilitas.*') || request()->is('vouchers*') || request()->routeIs('vouchers.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#villaMenu" role="button" aria-expanded="{{ request()->routeIs('villas.*') || request()->routeIs('fasilitas.*') || request()->is('vouchers*') || request()->routeIs('vouchers.*') ? 'true' : 'false' }}" aria-controls="villaMenu">
               <span class="nav-icon-chip chip-success"><i class="bi bi-buildings"></i></span>
               Manajemen Villa
               <i class="bi bi-chevron-down float-end mt-1" style="font-size: 0.8rem; transition: transform 0.2s ease;"></i>
             </a>
-            <div class="collapse {{ request()->routeIs('villas.*') || request()->routeIs('fasilitas.*') ? 'show' : '' }}" id="villaMenu">
+            <div class="collapse {{ request()->routeIs('villas.*') || request()->routeIs('fasilitas.*') || request()->is('vouchers*') || request()->routeIs('vouchers.*') ? 'show' : '' }}" id="villaMenu">
               <ul class="nav flex-column ms-3 gap-1 mt-1">
                 <li class="nav-item">
                   <a class="nav-link {{ request()->routeIs('fasilitas.*') ? 'active' : '' }}" href="{{ route('fasilitas.index') }}">
@@ -658,6 +658,12 @@
                   <a class="nav-link {{ request()->routeIs('villas.*') ? 'active' : '' }}" href="{{ route('villas.index') }}">
                     <span class="nav-icon-chip chip-success"><i class="bi bi-house-door"></i></span>
                     Villa
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('vouchers.*') ? 'active' : '' }}" href="{{ route('vouchers.index') }}">
+                    <span class="nav-icon-chip chip-success"><i class="bi bi-ticket-perforated"></i></span>
+                    Voucher
                   </a>
                 </li>
               </ul>

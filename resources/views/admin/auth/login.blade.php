@@ -10,7 +10,7 @@
     <!-- Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
@@ -19,21 +19,44 @@
 
     <style>
         :root {
-            --fi-primary: #C9A84C; /* Gold accent (landing) */
-            --fi-primary-hover: #B8933E; /* Darker gold */
-            --fi-brand: #1B3D2F; /* Deep green (landing primary) */
-            --fi-bg: #FAFAF8;
+            /* Brand (landing theme) */
+            --brand-primary:       #1B3D2F;
+            --brand-primary-light: #2D6148;
+            --brand-accent:        #C9A84C;
+            --brand-accent-light:  #E8C97D;
+
+            /* Surfaces & text */
+            --bg-app:     #F6F7F9;
+            --surface:    #FFFFFF;
+            --text-primary:   #0F172A;
+            --text-secondary: #64748B;
+            --border-subtle: rgba(15, 23, 42, 0.06);
+
+            /* Scale */
+            --radius-md: 14px;
+            --radius-lg: 20px;
+
+            /* Shadows */
+            --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 10px 28px rgba(15, 23, 42, 0.09);
+            --shadow-glow-primary: 0 10px 24px rgba(27, 61, 47, 0.28);
+            --shadow-glow-accent: 0 10px 24px rgba(201, 168, 76, 0.35);
+
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #1B3D2F 0%, #2D6148 100%);
+            --gradient-accent:  linear-gradient(135deg, #C9A84C 0%, #E8C97D 100%);
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #FAFAF8 0%, #F4F0E8 100%);
+            background: var(--bg-app);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0;
-            color: #1A1A1A;
+            color: var(--text-primary);
         }
 
         .login-container {
@@ -43,10 +66,10 @@
         }
 
         .login-card {
-            background: #ffffff;
-            border-radius: 1.25rem;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: none;
+            box-shadow: var(--shadow-md);
             padding: 2.5rem;
             position: relative;
             overflow: hidden;
@@ -59,28 +82,40 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: var(--fi-primary);
+            background: var(--gradient-primary);
         }
 
-        .brand-logo {
-            font-size: 1.75rem;
-            font-weight: 800;
-            letter-spacing: -0.025em;
-            color: var(--fi-brand);
+        .brand-logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .brand-badge {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+            box-shadow: var(--shadow-glow-primary);
         }
 
-        .brand-logo i {
-            color: var(--fi-primary);
-            margin-right: 0.75rem;
+        .brand-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 0.25rem;
         }
 
         .login-subtitle {
             text-align: center;
-            color: #64748b;
+            color: var(--text-secondary);
             font-size: 0.875rem;
             margin-bottom: 2.5rem;
         }
@@ -88,46 +123,46 @@
         .form-label {
             font-size: 0.8125rem;
             font-weight: 600;
-            color: #334155;
+            color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
 
         .form-control {
             height: 3.25rem;
-            border-radius: 0.75rem;
-            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
             padding: 0.75rem 1rem;
             font-size: 0.9375rem;
             transition: all 0.2s ease;
-            background-color: #f8fafc;
+            background-color: #F8FAFC;
+            color: var(--text-primary);
         }
 
         .form-control:focus {
             outline: none;
-            box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.15);
-            border-color: var(--fi-primary);
-            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(27, 61, 47, 0.1);
+            border-color: var(--brand-primary);
+            background-color: var(--surface);
         }
 
         .btn-login {
-            background-color: var(--fi-primary);
-            color: var(--fi-brand);
+            background: var(--gradient-primary);
+            color: #fff;
             height: 3.25rem;
             border: none;
-            border-radius: 0.75rem;
+            border-radius: var(--radius-md);
             font-weight: 600;
             font-size: 1rem;
             width: 100%;
             margin-top: 1rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(201, 168, 76, 0.25);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: var(--shadow-xs);
         }
 
         .btn-login:hover {
-            background-color: var(--fi-primary-hover);
             color: #fff;
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(201, 168, 76, 0.35);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow-primary);
         }
 
         .btn-login:active {
@@ -143,7 +178,7 @@
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #94a3b8;
+            color: var(--text-secondary);
             font-size: 1.125rem;
         }
 
@@ -153,32 +188,41 @@
 
         .forgot-link {
             font-size: 0.8125rem;
-            font-weight: 500;
-            color: var(--fi-primary);
+            font-weight: 600;
+            color: var(--brand-primary);
             text-decoration: none;
+            transition: all 0.2s ease;
         }
 
         .forgot-link:hover {
+            color: var(--brand-primary-light);
             text-decoration: underline;
         }
 
         .form-check-label {
             font-size: 0.875rem;
-            color: #475569;
+            color: var(--text-secondary);
             user-select: none;
         }
 
         .invalid-feedback {
             font-size: 0.75rem;
             font-weight: 500;
+            color: #EF4444;
         }
 
         .footer-copyright {
             text-align: center;
             margin-top: 2rem;
             font-size: 0.75rem;
-            color: #94a3b8;
+            color: var(--text-secondary);
         }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
         /* Responsive adjustments */
         @media (max-width: 480px) {
@@ -194,11 +238,13 @@
 <body>
 
 <div class="login-container">
-    <div class="login-card">
-        <div class="brand-logo">
-            <i class="bi bi-buildings-fill"></i>
-            <span>Villa Finance</span>
+    <div class="login-card animate-in">
+        <div class="brand-logo-container">
+            <div class="brand-badge">
+                <i class="bi bi-buildings-fill"></i>
+            </div>
         </div>
+        <div class="brand-text">Villa Finance</div>
         <div class="login-subtitle">
             Sign in to your dashboard to continue
         </div>

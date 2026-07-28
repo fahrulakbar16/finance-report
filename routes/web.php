@@ -78,4 +78,5 @@ Route::middleware(['auth', 'role:pengelola'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('villas', VillaController::class);
     Route::resource('admin-fasilitas', \App\Http\Controllers\FasilitasController::class)->parameters(['admin-fasilitas' => 'fasilita'])->names('fasilitas');
+    Route::resource('vouchers', \App\Http\Controllers\VoucherController::class);
 });
