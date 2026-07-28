@@ -870,7 +870,7 @@
         function updateBookingInfo(selectedDates) {
             const checkinVal = document.getElementById('vdCheckinVal');
             const checkoutVal = document.getElementById('vdCheckoutVal');
-            
+
             if (selectedDates && selectedDates.length > 0) {
                 checkinVal.textContent = flatpickr.formatDate(selectedDates[0], "d M Y");
                 checkinVal.classList.add('selected');
@@ -886,43 +886,25 @@
                 // Calculate nights
                 const diffTime = Math.abs(selectedDates[1] - selectedDates[0]);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
+
                 if (diffDays > 0) {
                     const total = diffDays * basePrice;
                     document.getElementById('vdBookingTotal').style.display = 'block';
                     document.getElementById('vdNightsText').textContent = diffDays + ' malam x ' + formatRp(basePrice);
                     document.getElementById('vdNightsPrice').textContent = formatRp(total);
                     document.getElementById('vdTotalPrice').textContent = formatRp(total);
-                    
+
                     // Update message for checkout link
                     const waBtn = document.getElementById('vdPesanBtn');
                     const waMobileBtn = document.getElementById('vdMobilePesanBtn');
-                    
+
                     const checkinStr = flatpickr.formatDate(selectedDates[0], "Y-m-d");
                     const checkoutStr = flatpickr.formatDate(selectedDates[1], "Y-m-d");
-                    
+
                     const url = `{{ route('checkout.index') }}?villa_id={{ $villa->id }}&checkin=${checkinStr}&checkout=${checkoutStr}`;
-                    
-                    @auth
-                        if (waBtn) waBtn.href = url;
-                        if (waMobileBtn) waMobileBtn.href = url;
-                    @else
-                        const loginAlert = `javascript:Swal.fire({
-                            icon:'info', 
-                            title:'Harap Login', 
-                            text:'Anda harus login terlebih dahulu untuk melakukan pemesanan.', 
-                            showCancelButton: true,
-                            confirmButtonText:'Login Sekarang',
-                            cancelButtonText:'Batal',
-                            confirmButtonColor:'#C9A84C'
-                        }).then((result) => { 
-                            if(result.isConfirmed) { 
-                                window.location.href = '${url}'; 
-                            } 
-                        })`;
-                        if (waBtn) waBtn.href = loginAlert;
-                        if (waMobileBtn) waMobileBtn.href = loginAlert;
-                    @endauth
+
+                    if (waBtn) waBtn.href = url;
+                    if (waMobileBtn) waMobileBtn.href = url;
 
                     // Update mobile sticky bar price text
                     const mobilePriceText = document.getElementById('vdMobilePriceText');
@@ -936,7 +918,7 @@
                     checkoutVal.classList.remove('selected');
                 }
                 document.getElementById('vdBookingTotal').style.display = 'none';
-                
+
                 const emptyUrl = `javascript:Swal.fire({icon:'warning', title:'Perhatian', text:'Silakan pilih tanggal Check-in dan Check-out terlebih dahulu', confirmButtonColor:'#C9A84C'})`;
                 const waBtn = document.getElementById('vdPesanBtn');
                 const waMobileBtn = document.getElementById('vdMobilePesanBtn');

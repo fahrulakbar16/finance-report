@@ -17,11 +17,11 @@ class CheckoutController extends Controller
     public function index(Request $request)
     {
         $villa = Villa::with(['rooms', 'galleries', 'fasilitas'])->findOrFail($request->villa_id);
-        
+
         $checkIn = Carbon::parse($request->checkin);
         $checkOut = Carbon::parse($request->checkout);
         $nights = $checkIn->diffInDays($checkOut);
-        
+
         if ($nights < 1) {
             return redirect()->back()->with('error', 'Tanggal checkout harus setelah tanggal check-in.');
         }
@@ -80,11 +80,11 @@ class CheckoutController extends Controller
         ]);
 
         $villa = Villa::with(['rooms', 'galleries', 'fasilitas'])->findOrFail($request->villa_id);
-        
+
         $checkIn = Carbon::parse($request->check_in);
         $checkOut = Carbon::parse($request->check_out);
         $nights = $checkIn->diffInDays($checkOut);
-        
+
         if ($nights < 1) {
             return back()->with('error', 'Tanggal menginap tidak valid.');
         }
@@ -137,10 +137,10 @@ class CheckoutController extends Controller
     {
         $clientId = env('DOKU_CLIENT_ID', 'DUMMY_CLIENT_ID');
         $secretKey = env('DOKU_SECRET_KEY', 'DUMMY_SECRET_KEY');
-        
+
         // For development, use sandbox URL. In production, use production URL.
-        $url = 'https://api-sandbox.doku.com/checkout/v1/payment'; 
-        
+        $url = 'https://api-sandbox.doku.com/checkout/v1/payment';
+
         $requestId = (string) Str::uuid();
         $targetPath = '/checkout/v1/payment';
         $timestamp = gmdate("Y-m-d\TH:i:s\Z");
@@ -149,7 +149,8 @@ class CheckoutController extends Controller
             "order" => [
                 "amount" => $booking->total_price,
                 "invoice_number" => $booking->invoice_number,
-                "callback_url" => route('customer.history'),
+                "callback_url" => route('checkout.success', ['invoice' => $booking->invoice_number]),
+                "notify_url" => route('doku.notification'),
             ],
             "payment" => [
                 "payment_due_date" => 60 // 60 minutes
@@ -158,18 +159,21 @@ class CheckoutController extends Controller
                 "name" => $booking->guest_name,
                 "email" => $booking->guest_email,
                 "phone" => $booking->guest_phone
+            ],
+            "additional_info" => [
+                "override_notification_url" => route('doku.notification')
             ]
         ];
 
         $jsonPayload = json_encode($payload);
-        
+
         // Generate DOKU Signature
         $digest = base64_encode(hash('sha256', $jsonPayload, true));
         $signatureComponent = "Client-Id:" . $clientId . "\n" .
-                              "Request-Id:" . $requestId . "\n" .
-                              "Request-Timestamp:" . $timestamp . "\n" .
-                              "Request-Target:" . $targetPath . "\n" .
-                              "Digest:" . $digest;
+            "Request-Id:" . $requestId . "\n" .
+            "Request-Timestamp:" . $timestamp . "\n" .
+            "Request-Target:" . $targetPath . "\n" .
+            "Digest:" . $digest;
         $signature = base64_encode(hash_hmac('sha256', $signatureComponent, $secretKey, true));
 
         $response = Http::withHeaders([
@@ -191,27 +195,45 @@ class CheckoutController extends Controller
     // POST /doku/notification
     public function dokuNotification(Request $request)
     {
+        \Log::info('DOKU Webhook Received: ', $request->all());
+
         // For production, you MUST validate the DOKU Signature here to ensure security!
         $invoiceNumber = $request->input('order.invoice_number');
         $amount = $request->input('order.amount');
-        
+        $status = $request->input('transaction.status');
+
         $booking = Booking::where('invoice_number', $invoiceNumber)->first();
         if ($booking) {
+            \Log::info("Booking found for $invoiceNumber. Transaction status: $status");
             // Check status transaction from DOKU
-            // E.g. 'SUCCESS'
-            $booking->update([
-                'payment_status' => 'paid'
-            ]);
-            
-            // Mark voucher as used if necessary
-            if ($booking->voucher_id) {
-                $voucher = Voucher::find($booking->voucher_id);
-                if ($voucher) {
-                    $voucher->increment('used_count');
+            if (strtoupper($status) === 'SUCCESS') {
+                $booking->update([
+                    'payment_status' => 'paid'
+                ]);
+                \Log::info("Booking $invoiceNumber marked as paid.");
+                
+                // Mark voucher as used if necessary
+                if ($booking->voucher_id) {
+                    $voucher = Voucher::find($booking->voucher_id);
+                    if ($voucher) {
+                        $voucher->increment('used_count');
+                    }
                 }
+            } else {
+                \Log::info("Booking $invoiceNumber ignored because status is not SUCCESS.");
             }
+        } else {
+            \Log::warning("DOKU Webhook Error: Booking not found for invoice $invoiceNumber");
         }
 
         return response()->json(['status' => 'success']);
+    }
+
+    // GET /checkout/success
+    public function success(Request $request)
+    {
+        return view('customer.pages.checkout-success', [
+            'invoice' => $request->query('invoice')
+        ]);
     }
 }

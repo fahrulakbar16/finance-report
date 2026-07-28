@@ -38,11 +38,10 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
     ->name('home');
 
 // ── Checkout & Payment ──
-Route::middleware(['auth', 'role:customer'])->group(function () {
-    Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout/voucher', [App\Http\Controllers\CheckoutController::class, 'applyVoucher'])->name('checkout.voucher');
-    Route::post('/checkout/process', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process');
-});
+Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout/voucher', [App\Http\Controllers\CheckoutController::class, 'applyVoucher'])->name('checkout.voucher');
+Route::post('/checkout/process', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process');
+Route::get('/checkout/success', [App\Http\Controllers\CheckoutController::class, 'success'])->name('checkout.success');
 
 // Webhook DOKU
 Route::post('/doku/notification', [App\Http\Controllers\CheckoutController::class, 'dokuNotification'])->name('doku.notification');
