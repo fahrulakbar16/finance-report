@@ -33,7 +33,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install and Build Frontend
         run: |
@@ -112,7 +112,7 @@ jobs:
             php artisan optimize:clear
             php artisan optimize
             php artisan storage:link
-            php artisan migrate --force
+            php artisan migrate
           EOF
 
       # 9️⃣ Cleanup
