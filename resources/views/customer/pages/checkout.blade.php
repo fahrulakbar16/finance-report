@@ -1,4 +1,4 @@
-@extends('layouts.search')
+@extends('layouts.landing')
 
 @section('title', 'Checkout Pemesanan - Athara Villas')
 
@@ -9,7 +9,7 @@
         --bg-section: #fbfbfb;
         --border-color: rgba(0,0,0,0.08);
     }
-    
+
     .vd-content { padding: 3rem 0 5rem; }
     .vd-checkout-grid {
         display: grid;
@@ -17,7 +17,7 @@
         gap: 2.5rem;
         align-items: start;
     }
-    
+
     .checkout-card {
         background: var(--surface);
         border-radius: 20px;
@@ -73,7 +73,7 @@
     .summary-item:last-of-type { border-bottom: none; }
     .summary-label { color: var(--text-muted); }
     .summary-val { font-weight: 600; color: var(--text-dark); }
-    
+
     .summary-total {
         display: flex; justify-content: space-between; align-items: center;
         padding-top: 1rem;
@@ -82,7 +82,7 @@
     }
     .summary-total-label { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
     .summary-total-val { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-    
+
     .villa-thumb {
         display: flex; gap: 1rem; align-items: center;
         margin-bottom: 1.5rem;
@@ -111,8 +111,35 @@
         margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);
     }
 
+    .checkout-mobile-bar {
+        display: none;
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: var(--surface);
+        padding: 0.85rem 1.25rem;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+        z-index: 1001;
+        align-items: center; justify-content: space-between;
+        border-top: 1px solid var(--border-color);
+    }
+    .btn-submit-mobile {
+        background: var(--primary); color: #fff;
+        border: none; padding: 0.6rem 1.25rem; border-radius: 12px;
+        font-size: 0.9rem; font-weight: 600; cursor: pointer;
+        transition: background 0.3s;
+    }
+
     @media (max-width: 991px) {
         .vd-checkout-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+        .site-nav { display: none !important; }
+        .site-footer { display: none !important; }
+        body { padding-top: 0 !important; padding-bottom: 85px !important; }
+        .checkout-mobile-bar { display: flex; }
+        /* Sembunyikan tombol submit desktop di mobile */
+        .btn-submit { display: none; }
+        .vd-content { padding-top: 1.5rem; }
     }
 </style>
 @endsection
@@ -120,7 +147,7 @@
 @section('content')
 <section class="vd-content">
     <div class="container">
-        
+
         @if(session('error'))
             <div class="alert alert-danger" style="background: #f8d7da; color: #842029; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
                 {{ session('error') }}
@@ -135,22 +162,22 @@
             <input type="hidden" name="voucher_code" id="inputVoucherCode" value="">
 
             <div class="vd-checkout-grid">
-                
+
                 {{-- LEFT: FORM DATA --}}
                 <div>
                     <div class="checkout-card">
                         <h2 class="checkout-title">Detail Tamu</h2>
-                        
+
                         <div class="form-group">
                             <label class="form-label">Nama Lengkap</label>
                             <input type="text" name="guest_name" class="form-control" value="{{ Auth::user()->name ?? '' }}" required placeholder="Nama pemesan">
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="form-label">Alamat Email</label>
                             <input type="email" name="guest_email" class="form-control" value="{{ Auth::user()->email ?? '' }}" required placeholder="Email untuk pengiriman e-invoice">
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="form-label">Nomor WhatsApp / HP</label>
                             <input type="text" name="guest_phone" class="form-control" value="{{ Auth::user()->phone ?? '' }}" required placeholder="Contoh: 08123456789">
@@ -171,7 +198,7 @@
                 <div>
                     <div class="checkout-card">
                         <h2 class="checkout-title">Ringkasan Pesanan</h2>
-                        
+
                         <div class="villa-thumb">
                             @php
                                 $img = $villa->galleries->first() ? $villa->galleries->first()->image : $villa->image;
@@ -202,7 +229,7 @@
                                 <span class="summary-label">Harga ({{ $nights }} malam)</span>
                                 <span class="summary-val">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
                             </div>
-                            
+
                             <div class="summary-item" id="discountRow" style="display: none;">
                                 <span class="summary-label" style="color: #198754;">Diskon Promo</span>
                                 <span class="summary-val" style="color: #198754;" id="discountVal">- Rp 0</span>
@@ -217,17 +244,28 @@
                         <button type="submit" class="btn-submit">
                             Lanjutkan Pembayaran <i class="bi bi-arrow-right"></i>
                         </button>
-                        
+
                         <div class="doku-badge">
                             <i class="bi bi-shield-lock-fill" style="color: #198754;"></i> Pembayaran aman didukung oleh <strong>DOKU</strong>
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </form>
     </div>
 </section>
+
+{{-- MOBILE BOTTOM BAR --}}
+<div class="checkout-mobile-bar">
+    <div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.15rem;">Total Pembayaran</div>
+        <div style="font-size: 1.15rem; font-weight: 700; color: var(--primary);" id="mobileTotalVal">Rp {{ number_format($totalPrice, 0, ',', '.') }}</div>
+    </div>
+    <button type="button" class="btn-submit-mobile" onclick="document.getElementById('checkoutForm').submit();">
+        Bayar <i class="bi bi-arrow-right"></i>
+    </button>
+</div>
 @endsection
 
 @section('scripts')
@@ -239,7 +277,7 @@
         const code = document.getElementById('voucherField').value.trim();
         const msgDiv = document.getElementById('voucherMessage');
         const btn = this;
-        
+
         if (!code) return;
 
         btn.disabled = true;
@@ -260,24 +298,26 @@
             if (data.success) {
                 msgDiv.textContent = data.message;
                 msgDiv.classList.add('success');
-                
+
                 // Update hidden input
                 document.getElementById('inputVoucherCode').value = code;
-                
+
                 // Show discount row
                 document.getElementById('discountRow').style.display = 'flex';
                 document.getElementById('discountVal').textContent = '- ' + formatRp(data.discount_amount);
-                
+
                 // Update total
                 document.getElementById('totalVal').textContent = formatRp(data.final_price);
+                document.getElementById('mobileTotalVal').textContent = formatRp(data.final_price);
             } else {
                 msgDiv.textContent = data.message;
                 msgDiv.classList.add('error');
-                
+
                 // Reset hidden input & UI
                 document.getElementById('inputVoucherCode').value = '';
                 document.getElementById('discountRow').style.display = 'none';
                 document.getElementById('totalVal').textContent = formatRp(baseTotal);
+                document.getElementById('mobileTotalVal').textContent = formatRp(baseTotal);
             }
         })
         .catch(err => {

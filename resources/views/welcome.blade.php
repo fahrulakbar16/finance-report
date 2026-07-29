@@ -639,7 +639,7 @@
                         <li><a href="{{ route('testimoni') }}">Testimoni</a></li>
                         <li><a href="{{ route('kontak') }}">Kontak</a></li>
                     </ul>
-                    <a href="{{ route('villa.index') }}" class="btn-nav-login">
+                    <a href="{{ route('villa.collection') }}" class="btn-nav-login">
                         <i class="bi bi-calendar-check-fill" style="font-size:0.85rem;"></i> Reservasi
                     </a>
                 </div>
@@ -663,7 +663,7 @@
                     Pengalaman menginap tak terlupakan dengan fasilitas premium, pemandangan alam memukau, dan pelayanan hangat untuk setiap momen istimewa Anda.
                 </p>
                 <div class="hero-actions">
-                    <a href="{{ route('villa.index') }}" class="btn-primary-gold">
+                    <a href="{{ route('villa.collection') }}" class="btn-primary-gold">
                         Lihat Villa <i class="bi bi-arrow-right"></i>
                     </a>
                     <a href="{{ route('kontak') }}" class="btn-outline-white">

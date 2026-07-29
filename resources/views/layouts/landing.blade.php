@@ -284,12 +284,9 @@
                     <li><a href="{{ route('testimoni') }}" class="{{ request()->routeIs('testimoni')  ? 'active' : '' }}">Testimoni</a></li>
                     <li><a href="{{ route('kontak') }}"    class="{{ request()->routeIs('kontak')     ? 'active' : '' }}">Kontak</a></li>
                 </ul>
-                <a href="{{ route('villa.index') }}" class="btn-nav-login">
+                {{-- <a href="{{ route('villa.index') }}" class="btn-nav-login">
                     <i class="bi bi-calendar-check-fill"></i> Reservasi
-                </a>
-                <a href="{{ route('customer.login') }}" class="btn-nav-login" style="background:transparent;border:1.5px solid #e5e7eb;color:var(--text-muted);font-size:0.8rem;padding:0.45rem 1rem;">
-                    <i class="bi bi-box-arrow-in-right"></i> Login
-                </a>
+                </a> --}}
             </div>
         </div>
     </div>
@@ -425,7 +422,7 @@
             title: "{{ session('error') }}"
         });
     @endif
-    
+
     @if(session('warning'))
         Toast.fire({
             icon: 'warning',

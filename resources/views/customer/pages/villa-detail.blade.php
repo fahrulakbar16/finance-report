@@ -1,4 +1,4 @@
-@extends('layouts.search')
+@extends('layouts.landing')
 
 @section('title', $villa->name . ' - Athara Villas')
 @section('description', Str::limit($villa->description, 155))
