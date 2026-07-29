@@ -135,8 +135,8 @@ class CheckoutController extends Controller
 
     private function createDokuPaymentUrl(Booking $booking)
     {
-        $clientId = env('DOKU_CLIENT_ID', 'DUMMY_CLIENT_ID');
-        $secretKey = env('DOKU_SECRET_KEY', 'DUMMY_SECRET_KEY');
+        $clientId = config('services.doku.client_id');
+        $secretKey = config('services.doku.secret_key');
 
         \Log::info('DOKU Client ID: ' . $clientId);
         \Log::info('DOKU Secret Key: ' . $secretKey);
