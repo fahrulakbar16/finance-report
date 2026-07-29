@@ -44,6 +44,7 @@ Route::post('/checkout/process', [App\Http\Controllers\CheckoutController::class
 Route::get('/checkout/success', [App\Http\Controllers\CheckoutController::class, 'success'])->name('checkout.success');
 
 // Webhook DOKU
+Route::get('/doku/notification', [App\Http\Controllers\CheckoutController::class, 'dokuNotification'])->name('doku.notification');
 Route::post('/doku/notification', [App\Http\Controllers\CheckoutController::class, 'dokuNotification'])->name('doku.notification');
 
 // ── Customer Pages ──
