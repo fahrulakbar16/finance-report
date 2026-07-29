@@ -138,6 +138,9 @@ class CheckoutController extends Controller
         $clientId = env('DOKU_CLIENT_ID', 'DUMMY_CLIENT_ID');
         $secretKey = env('DOKU_SECRET_KEY', 'DUMMY_SECRET_KEY');
 
+        \Log::info('DOKU Client ID: ' . $clientId);
+        \Log::info('DOKU Secret Key: ' . $secretKey);
+
         // For development, use sandbox URL. In production, use production URL.
         $url = 'https://api-sandbox.doku.com/checkout/v1/payment';
 
@@ -211,7 +214,7 @@ class CheckoutController extends Controller
                     'payment_status' => 'paid'
                 ]);
                 \Log::info("Booking $invoiceNumber marked as paid.");
-                
+
                 // Mark voucher as used if necessary
                 if ($booking->voucher_id) {
                     $voucher = Voucher::find($booking->voucher_id);
