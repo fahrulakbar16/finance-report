@@ -35,6 +35,25 @@ class PublicVillaController extends Controller
         $villa->load(['galleries', 'rooms', 'fasilitas']);
         $related = Villa::where('id', '!=', $villa->id)->take(3)->get();
 
+        // Get booked dates (pending or paid/success)
+        $bookings = \App\Models\Booking::where('villa_id', $villa->id)
+            ->whereIn('payment_status', ['pending', 'paid', 'success'])
+            ->where('check_out', '>=', now()->toDateString())
+            ->get(['check_in', 'check_out']);
+
+        $bookedDates = [];
+        foreach ($bookings as $b) {
+            $start = \Carbon\Carbon::parse($b->check_in);
+            $end = \Carbon\Carbon::parse($b->check_out);
+            
+            // Loop from start up to (end - 1 day)
+            for ($date = $start->copy(); $date->lt($end); $date->addDay()) {
+                $bookedDates[] = $date->format('Y-m-d');
+            }
+        }
+        // Remove duplicates and re-index
+        $bookedDates = array_values(array_unique($bookedDates));
+
         // Save to recent history in session
         $recent = session()->get('recent_villas', []);
         $recent[$villa->id] = now()->timestamp;
@@ -42,7 +61,7 @@ class PublicVillaController extends Controller
         $recent = array_slice($recent, 0, 10, true);
         session()->put('recent_villas', $recent);
 
-        return view('customer.pages.villa-detail', compact('villa', 'related'));
+        return view('customer.pages.villa-detail', compact('villa', 'related', 'bookedDates'));
     }
 
     public function search(Request $request)

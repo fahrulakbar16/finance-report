@@ -223,19 +223,19 @@
 
                         <div class="form-group">
                             <label class="form-label">Nama Lengkap</label>
-                            <input type="text" name="guest_name" class="form-control" value="{{ Auth::user()->name ?? '' }}" required placeholder="Nama pemesan">
+                            <input type="text" name="guest_name" class="form-control" value="" required placeholder="Nama pemesan">
                             <div class="invalid-feedback">Nama lengkap wajib diisi.</div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Alamat Email</label>
-                            <input type="email" name="guest_email" class="form-control" value="{{ Auth::user()->email ?? '' }}" required placeholder="Email untuk pengiriman e-invoice">
+                            <input type="email" name="guest_email" class="form-control" value="" required placeholder="Email untuk pengiriman e-invoice">
                             <div class="invalid-feedback">Alamat email wajib diisi dengan format yang benar.</div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Nomor WhatsApp / HP</label>
-                            <input type="text" name="guest_phone" class="form-control" value="{{ Auth::user()->phone ?? '' }}" required placeholder="Contoh: 08123456789">
+                            <input type="text" name="guest_phone" class="form-control" value="" required placeholder="Contoh: 08123456789">
                             <div class="invalid-feedback">Nomor WhatsApp / HP wajib diisi.</div>
                         </div>
                     </div>

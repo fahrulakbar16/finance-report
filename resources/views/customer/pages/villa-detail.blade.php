@@ -856,6 +856,7 @@
             locale: "id",
             showMonths: window.innerWidth > 768 ? 2 : 1,
             dateFormat: "Y-m-d",
+            disable: @json($bookedDates ?? []),
             defaultDate: defaultDates.length > 0 ? defaultDates : null,
             onReady: function(selectedDates) {
                 if (selectedDates.length > 0) {
