@@ -8,8 +8,10 @@ use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Mail\PaymentPendingMail;
 
 class CheckoutController extends Controller
 {
@@ -127,6 +129,12 @@ class CheckoutController extends Controller
 
         if ($paymentUrl) {
             $booking->update(['payment_url' => $paymentUrl]);
+            // try {
+            //     Mail::to($booking->guest_email)->send(new PaymentPendingMail($booking));
+            // } catch (\Exception $e) {
+            //     \Log::error('Gagal mengirim email pembayaran: ' . $e->getMessage());
+            // }
+
             return redirect($paymentUrl);
         }
 
