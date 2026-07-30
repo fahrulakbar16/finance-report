@@ -54,4 +54,9 @@ class Villa extends Model
     {
         return $this->hasMany(VillaGallery::class);
     }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

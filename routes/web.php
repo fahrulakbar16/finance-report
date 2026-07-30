@@ -75,6 +75,7 @@ Route::middleware(['auth', 'role:pemilik|pengelola'])->group(function () {
 
 Route::middleware(['auth', 'role:pengelola'])->group(function () {
     Route::resource('users', UserController::class);
+    Route::get('villas/{villa}/laporan', [VillaController::class, 'laporan'])->name('villas.laporan');
     Route::resource('villas', VillaController::class);
     Route::resource('admin-fasilitas', \App\Http\Controllers\FasilitasController::class)->parameters(['admin-fasilitas' => 'fasilita'])->names('fasilitas');
     Route::resource('vouchers', \App\Http\Controllers\VoucherController::class);

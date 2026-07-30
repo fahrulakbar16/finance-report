@@ -3,83 +3,133 @@
 @section('page_title', 'Tambah Fasilitas')
 
 @section('content')
-<div class="container-fluid px-0">
+<style>
+    .page-hero {
+        position: relative; background: var(--gradient-primary);
+        border-radius: var(--radius-lg); padding: 1.5rem 2rem; margin-bottom: 1.75rem;
+        overflow: hidden; box-shadow: var(--shadow-glow-primary);
+    }
+    .page-hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(201,168,76,0.12); pointer-events: none; }
+    .page-hero-content { position: relative; z-index: 1; }
+    .btn-hero-back {
+        display: inline-flex; align-items: center; gap: 0.45rem;
+        font-size: 0.82rem; font-weight: 600; border-radius: var(--radius-sm);
+        padding: 0.45rem 1rem; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85);
+        border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px); text-decoration: none; transition: all 0.2s;
+    }
+    .btn-hero-back:hover { background: rgba(255,255,255,0.18); color: #fff; }
+    .page-hero-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(201,168,76,0.2); border: 1px solid rgba(201,168,76,0.35); color: var(--brand-accent-light); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 0.25rem 0.7rem; border-radius: var(--radius-pill); margin-bottom: 0.4rem; }
+    .page-hero-title { font-size: 1.3rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; margin: 0; }
+    .form-card { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm); overflow: hidden; }
+    .form-card-header { display: flex; align-items: center; gap: 0.6rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); }
+    .form-card-icon { width: 34px; height: 34px; border-radius: var(--radius-sm); background: rgba(27,61,47,0.08); color: var(--brand-primary); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; }
+    .form-card-title { font-size: 0.84rem; font-weight: 700; color: var(--text-primary); }
+    .form-card-body { padding: 1.5rem; }
+    .fi-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.4rem; display: block; }
+    .fi-label span { color: var(--danger); }
+    .fi-input { width: 100%; background: var(--bg-app); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.6rem 0.9rem; font-size: 0.84rem; font-weight: 500; color: var(--text-primary); transition: border-color 0.15s, box-shadow 0.15s; outline: none; }
+    .fi-input:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 3px rgba(27,61,47,0.08); background: var(--surface); }
+    .fi-hint { font-size: 0.72rem; color: var(--text-tertiary); margin-top: 0.3rem; }
+    .icon-input-group { display: flex; align-items: center; background: var(--bg-app); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s; }
+    .icon-input-group:focus-within { border-color: var(--brand-primary); box-shadow: 0 0 0 3px rgba(27,61,47,0.08); background: var(--surface); }
+    .icon-input-prefix { padding: 0 0.75rem; color: var(--text-tertiary); border-right: 1px solid var(--border-subtle); display: flex; align-items: center; }
+    .icon-input-group .fi-input-bare { border: none; background: transparent; padding: 0.6rem 0.9rem; flex: 1; font-size: 0.84rem; font-weight: 500; color: var(--text-primary); outline: none; width: 100%; }
+    .preview-box { background: var(--bg-app); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
+    .preview-icon-wrap { width: 40px; height: 40px; border-radius: var(--radius-sm); background: rgba(27,61,47,0.08); color: var(--brand-primary); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .preview-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary); margin-bottom: 0.1rem; }
+    .preview-name { font-size: 0.88rem; font-weight: 700; color: var(--text-primary); }
+    .icon-grid-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 6px; }
+    .icon-grid-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); border: 1.5px solid var(--border-subtle); background: var(--bg-app); width: 100%; aspect-ratio: 1; font-size: 1.15rem; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; padding: 0; }
+    .icon-grid-btn:hover { border-color: var(--brand-primary); background: rgba(27,61,47,0.06); color: var(--brand-primary); transform: translateY(-1px); box-shadow: var(--shadow-xs); }
+    .icon-grid-btn.selected { border-color: var(--brand-primary); background: rgba(27,61,47,0.1); color: var(--brand-primary); box-shadow: 0 0 0 2px rgba(27,61,47,0.15); }
+    .icon-hint { font-size: 0.72rem; color: var(--text-tertiary); margin-top: 0.75rem; }
+    .icon-hint a { color: var(--info); text-decoration: none; font-weight: 600; }
+    .icon-hint a:hover { text-decoration: underline; }
+    .form-divider { border: none; border-top: 1px solid var(--border-subtle); margin: 1.5rem 0; }
+    .btn-submit { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.84rem; font-weight: 700; background: var(--gradient-primary); color: #fff; border: none; border-radius: var(--radius-sm); padding: 0.65rem 1.6rem; cursor: pointer; box-shadow: var(--shadow-glow-primary); transition: all 0.15s; }
+    .btn-submit:hover { opacity: 0.88; }
+    .btn-cancel-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.84rem; font-weight: 600; background: var(--bg-app); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.65rem 1.4rem; text-decoration: none; transition: all 0.15s; }
+    .btn-cancel-link:hover { background: #e2e5ea; color: var(--text-primary); }
+</style>
 
-    <div class="d-flex align-items-center mb-4 gap-3">
-        <a href="{{ route('fasilitas.index') }}" class="btn btn-light rounded-circle shadow-sm" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
-            <i class="bi bi-arrow-left fs-5"></i>
-        </a>
-        <div class="page-header-fi mb-0">
-            <h4 class="mb-0">Tambah Fasilitas</h4>
+<div class="container-fluid px-0 animate-in">
+    <!-- HERO -->
+    <div class="page-hero mb-4">
+        <div class="page-hero-content">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <a href="{{ route('fasilitas.index') }}" class="btn-hero-back">
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
+            </div>
+            <div class="page-hero-badge"><i class="bi bi-plus-circle-fill"></i> Tambah Baru</div>
+            <h1 class="page-hero-title">Tambah Fasilitas</h1>
         </div>
     </div>
 
-    <div class="card card-fi border-0 shadow-sm">
-        <div class="card-body p-4">
+    <div class="form-card">
+        <div class="form-card-header">
+            <div class="form-card-icon"><i class="bi bi-grid-fill"></i></div>
+            <span class="form-card-title">Informasi Fasilitas Baru</span>
+        </div>
+        <div class="form-card-body">
             <form action="{{ route('fasilitas.store') }}" method="POST">
                 @csrf
-                
-                <div class="row">
+                <div class="row g-4">
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <label class="form-label fw-medium text-dark">Nama Fasilitas <span class="text-danger">*</span></label>
-                            <input type="text" id="nameInput" name="nama" class="form-control form-control-fi" value="{{ old('nama') }}" required placeholder="Contoh: WiFi, AC, Kolam Renang">
+                            <label class="fi-label">Nama Fasilitas <span>*</span></label>
+                            <input type="text" id="nameInput" name="nama" class="fi-input" value="{{ old('nama') }}" required placeholder="Contoh: WiFi, AC, Kolam Renang">
                         </div>
-
                         <div class="mb-4">
-                            <label class="form-label fw-medium text-dark">Ikon Fasilitas</label>
-                            <p class="text-muted small mb-2">Pilih ikon dari daftar di bawah atau ketikkan class Bootstrap Icons secara manual.</p>
-                            
-                            <div class="input-group mb-3 shadow-sm" style="border-radius: var(--fi-radius); overflow: hidden;">
-                                <span class="input-group-text bg-light border-0" id="basic-addon1">
-                                    <i class="bi bi-search"></i>
-                                </span>
-                                <input type="text" id="iconInput" name="ikon" class="form-control form-control-fi border-0 ps-2" value="{{ old('ikon', 'bi-wifi') }}" placeholder="Contoh: bi-wifi">
+                            <label class="fi-label">Class Ikon Bootstrap Icons</label>
+                            <div class="icon-input-group">
+                                <div class="icon-input-prefix"><i class="bi bi-search"></i></div>
+                                <input type="text" id="iconInput" name="ikon" class="fi-input-bare" value="{{ old('ikon', 'bi-wifi') }}" placeholder="Contoh: bi-wifi">
                             </div>
-
-                            <div class="mt-3 p-3 border rounded-3 bg-white shadow-sm">
-                                <h6 class="text-muted mb-3 small text-uppercase fw-bold">Preview Tampilan</h6>
-                                <div class="d-flex align-items-center gap-2 text-dark">
-                                    <i id="iconPreview" class="bi {{ old('ikon', 'bi-wifi') }} fs-5 text-secondary"></i>
-                                    <span id="namePreview" class="fw-medium">{{ old('nama', 'Nama Fasilitas') }}</span>
+                            <div class="fi-hint">Ketikkan nama class atau pilih dari grid ikon di kanan.</div>
+                        </div>
+                        <div>
+                            <label class="fi-label">Preview Tampilan</label>
+                            <div class="preview-box">
+                                <div class="preview-icon-wrap">
+                                    <i id="iconPreview" class="bi {{ old('ikon', 'bi-wifi') }}"></i>
+                                </div>
+                                <div>
+                                    <div class="preview-label">Fasilitas</div>
+                                    <div class="preview-name" id="namePreview">{{ old('nama', 'Nama Fasilitas') }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-6">
-                        <div class="mb-4">
-                            <label class="form-label fw-medium text-dark mb-3">Pilihan Ikon Umum</label>
-                            <div class="row g-2" id="iconGrid">
-                                @php
-                                    $commonIcons = [
-                                        'bi-wifi', 'bi-tv', 'bi-snow', 'bi-cup-hot', 'bi-car-front', 
-                                        'bi-water', 'bi-house-door', 'bi-shield-check', 'bi-speaker', 'bi-fire', 
-                                        'bi-fan', 'bi-tree', 'bi-bicycle', 'bi-camera-video', 'bi-hdd-network', 
-                                        'bi-reception-4', 'bi-music-note-beamed', 'bi-lamp', 'bi-clock', 'bi-calendar-event',
-                                        'bi-wind', 'bi-droplet', 'bi-plug', 'bi-controller', 'bi-key'
-                                    ];
-                                @endphp
-                                @foreach($commonIcons as $icon)
-                                <div class="col-auto">
-                                    <button type="button" class="btn btn-outline-light border text-dark icon-btn d-flex flex-column align-items-center justify-content-center p-2 rounded-3" style="width: 70px; height: 70px;" data-icon="{{ $icon }}" title="{{ $icon }}">
-                                        <i class="bi {{ $icon }} fs-4 mb-1"></i>
-                                    </button>
-                                </div>
-                                @endforeach
-                            </div>
-                            <div class="mt-3 text-muted small">
-                                * Anda juga dapat mencari ikon lain di <a href="https://icons.getbootstrap.com/" target="_blank">dokumentasi Bootstrap Icons</a>.
-                            </div>
+                        <label class="fi-label">Pilihan Ikon Umum</label>
+                        @php
+                            $commonIcons = [
+                                'bi-wifi', 'bi-tv', 'bi-snow', 'bi-cup-hot', 'bi-car-front',
+                                'bi-water', 'bi-house-door', 'bi-shield-check', 'bi-speaker', 'bi-fire',
+                                'bi-fan', 'bi-tree', 'bi-bicycle', 'bi-camera-video', 'bi-hdd-network',
+                                'bi-reception-4', 'bi-music-note-beamed', 'bi-lamp', 'bi-clock', 'bi-calendar-event',
+                                'bi-wind', 'bi-droplet', 'bi-plug', 'bi-controller', 'bi-key'
+                            ];
+                            $currentIcon = old('ikon', 'bi-wifi');
+                        @endphp
+                        <div class="icon-grid-wrap" id="iconGrid">
+                            @foreach($commonIcons as $icon)
+                                <button type="button" class="icon-grid-btn {{ $currentIcon === $icon ? 'selected' : '' }}" data-icon="{{ $icon }}" title="{{ $icon }}">
+                                    <i class="bi {{ $icon }}"></i>
+                                </button>
+                            @endforeach
+                        </div>
+                        <div class="icon-hint">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Cari ikon lainnya di <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a>
                         </div>
                     </div>
                 </div>
-
-                <hr class="my-4 text-light">
-
+                <hr class="form-divider">
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('fasilitas.index') }}" class="btn btn-light px-4">Batal</a>
-                    <button type="submit" class="btn btn-primary px-4">Simpan Fasilitas</button>
+                    <a href="{{ route('fasilitas.index') }}" class="btn-cancel-link"><i class="bi bi-x-lg"></i> Batal</a>
+                    <button type="submit" class="btn-submit"><i class="bi bi-check-lg"></i> Simpan Fasilitas</button>
                 </div>
             </form>
         </div>
@@ -87,52 +137,34 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const nameInput = document.getElementById('nameInput');
-        const iconInput = document.getElementById('iconInput');
-        const iconPreview = document.getElementById('iconPreview');
-        const namePreview = document.getElementById('namePreview');
-        const iconBtns = document.querySelectorAll('.icon-btn');
+document.addEventListener('DOMContentLoaded', function() {
+    const nameInput = document.getElementById('nameInput');
+    const iconInput = document.getElementById('iconInput');
+    const iconPreview = document.getElementById('iconPreview');
+    const namePreview = document.getElementById('namePreview');
+    const iconBtns = document.querySelectorAll('.icon-grid-btn');
 
-        function updateIconPreview(iconClass) {
-            // Hapus semua class kecuali 'bi' dan 'fs-5' dsb
-            iconPreview.className = 'bi fs-5 text-secondary';
-            
-            if (iconClass) {
-                const classes = iconClass.split(' ').filter(c => c.trim() !== '' && c !== 'bi');
-                if (classes.length > 0) {
-                    classes.forEach(c => iconPreview.classList.add(c));
-                } else {
-                    iconPreview.className = 'bi bi-question-circle fs-5 text-muted';
-                }
-            } else {
-                iconPreview.className = 'bi bi-question-circle fs-5 text-muted';
-            }
-        }
+    function updateIconPreview(iconClass) {
+        iconPreview.className = 'bi';
+        const classes = (iconClass || '').split(' ').filter(c => c.trim() && c !== 'bi');
+        if (classes.length > 0) { classes.forEach(c => iconPreview.classList.add(c)); }
+        else { iconPreview.className = 'bi bi-question-circle'; }
+    }
+    function updateNamePreview(name) { namePreview.textContent = name || 'Nama Fasilitas'; }
+    function setActiveBtn(icon) { iconBtns.forEach(btn => btn.classList.toggle('selected', btn.getAttribute('data-icon') === icon)); }
 
-        function updateNamePreview(name) {
-            namePreview.textContent = name ? name : 'Nama Fasilitas';
-        }
-
-        iconInput.addEventListener('input', function(e) {
-            updateIconPreview(e.target.value);
+    iconInput.addEventListener('input', function() { updateIconPreview(this.value); setActiveBtn(this.value.trim()); });
+    nameInput.addEventListener('input', function() { updateNamePreview(this.value); });
+    iconBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const iconClass = this.getAttribute('data-icon');
+            iconInput.value = iconClass;
+            updateIconPreview(iconClass);
+            setActiveBtn(iconClass);
         });
-
-        nameInput.addEventListener('input', function(e) {
-            updateNamePreview(e.target.value);
-        });
-
-        iconBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const iconClass = this.getAttribute('data-icon');
-                iconInput.value = iconClass;
-                updateIconPreview(iconClass);
-            });
-        });
-        
-        // Initialize
-        updateIconPreview(iconInput.value);
-        updateNamePreview(nameInput.value);
     });
+    updateIconPreview(iconInput.value);
+    updateNamePreview(nameInput.value);
+});
 </script>
 @endsection

@@ -52,7 +52,18 @@ class VillaController extends Controller
             ->with('success', 'Villa successfully updated.');
     }
 
-    public function show(Request $request, Villa $villa)
+    public function show(Villa $villa)
+    {
+        $villa->load(['pemilik', 'rooms', 'fasilitas', 'galleries']);
+        
+        $bookings = $villa->bookings()
+            ->whereIn('payment_status', ['pending', 'paid', 'success'])
+            ->get();
+
+        return view('admin.villas.show', compact('villa', 'bookings'));
+    }
+
+    public function laporan(Request $request, Villa $villa)
     {
         $query = $villa->transactions()->with('villa');
 
@@ -72,7 +83,7 @@ class VillaController extends Controller
         $totalExpense = (clone $statsQuery)->where('type', 'expense')->sum('amount');
         $balance = $totalIncome - $totalExpense;
 
-        return view('admin.villas.show', compact('villa', 'transactions', 'totalIncome', 'totalExpense', 'balance'));
+        return view('admin.villas.showLaporan', compact('villa', 'transactions', 'totalIncome', 'totalExpense', 'balance'));
     }
 
     public function destroy(Villa $villa)
