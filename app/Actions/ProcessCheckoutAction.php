@@ -64,7 +64,7 @@ class ProcessCheckoutAction
 
         if ($paymentUrl) {
             $booking->update(['payment_url' => $paymentUrl]);
-            
+
             try {
                 Mail::to($booking->guest_email)->send(new PaymentPendingMail($booking));
             } catch (\Exception $e) {
@@ -86,7 +86,7 @@ class ProcessCheckoutAction
         \Log::info('DOKU Secret Key: ' . $secretKey);
 
         // For development, use sandbox URL. In production, use production URL.
-        $url = 'https://api-sandbox.doku.com/checkout/v1/payment';
+        $url = 'https://api.doku.com/checkout/v1/payment';
 
         $requestId = (string) Str::uuid();
         $targetPath = '/checkout/v1/payment';
