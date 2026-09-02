@@ -36,6 +36,7 @@ return [
     ],
 
     'doku' => [
+        'is_production' => env('DOKU_IS_PRODUCTION', false),
         'client_id' => env('DOKU_CLIENT_ID', 'DUMMY_CLIENT_ID'),
         'secret_key' => env('DOKU_SECRET_KEY', 'DUMMY_SECRET_KEY'),
     ],

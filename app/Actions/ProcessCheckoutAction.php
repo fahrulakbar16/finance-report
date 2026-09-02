@@ -81,16 +81,19 @@ class ProcessCheckoutAction
     {
         $clientId = config('services.doku.client_id');
         $secretKey = config('services.doku.secret_key');
-
-        \Log::info('DOKU Client ID: ' . $clientId);
-        \Log::info('DOKU Secret Key: ' . $secretKey);
+        $isProduction = config('services.doku.is_production');
 
         // For development, use sandbox URL. In production, use production URL.
-        $url = 'https://api.doku.com/checkout/v1/payment';
+        $url =  $isProduction ? 'https://api.doku.com/checkout/v1/payment' : 'https://api-sandbox.doku.com/checkout/v1/payment';
 
         $requestId = (string) Str::uuid();
         $targetPath = '/checkout/v1/payment';
         $timestamp = gmdate("Y-m-d\TH:i:s\Z");
+
+        $nights = $booking->check_in->diffInDays($booking->check_out);
+        $formattedPrice = number_format($booking->total_price, 0, ',', '.');
+        $checkInDate = $booking->check_in->format('d M Y');
+        $description = "{$booking->villa->name}, {$nights} Malam, Rp {$formattedPrice}, {$checkInDate}";
 
         $payload = [
             "order" => [
@@ -98,6 +101,13 @@ class ProcessCheckoutAction
                 "invoice_number" => $booking->invoice_number,
                 "callback_url" => route('checkout.success', ['invoice' => $booking->invoice_number]),
                 "notify_url" => route('doku.notification'),
+                "line_items" => [
+                    [
+                        "name" => substr($description, 0, 100),
+                        "price" => $booking->total_price,
+                        "quantity" => 1
+                    ]
+                ]
             ],
             "payment" => [
                 "payment_due_date" => 60 // 60 minutes
@@ -134,8 +144,6 @@ class ProcessCheckoutAction
         if ($response->successful() && isset($response['response']['payment']['url'])) {
             return $response['response']['payment']['url'];
         }
-
-        \Log::error('DOKU Checkout Error: ' . $response->body());
         return null;
     }
 }
